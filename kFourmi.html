@@ -16,16 +16,19 @@
 		<nav>
 			<h2>MENU</h2>
 			<ul>
-				<li onclick="menudisplay(1)">I - Automates cellulaire</li>
-				<a class="displayNone1" href="index.html">Wolfram</a>
-				<a class="displayNone1" href="#top">Langton</a>
-				<a class="displayNone1" href="kVie.html">Conway soon</a>
-				<li onclick="menudisplay(2)">II - Fractal</li>
-				<a class="displayNone2" href="kMand.html">Mandelbrot</a>
-				<a class="displayNone2" href="#">Julia soon</a>
-				<a class="displayNone2" href="#">Menger soon??</a>
-				<li onclick="menudisplay(3)">III - Outils</li>
-				<a class="displayNone3" href="#">Reconnaissance fonction</a>
+				<li onclick="menudisplay(1)">I - Automates cellulaire
+					<a class="displayNone1" href="index.html">Wolfram</a>
+					<a class="displayNone1" href="#top">Langton</a>
+					<a class="displayNone1" href="#">Conway soon</a>
+				</li>
+				<li onclick="menudisplay(2)">II - Fractal
+					<a class="displayNone2" href="kMandelbrot.html">Mandelbrot</a>
+					<a class="displayNone2" href="#">Julia soon</a>
+					<a class="displayNone2" href="#">Menger soon??</a>
+				</li>
+				<li onclick="menudisplay(3)">III - Outils
+					<a class="displayNone3" href="kRecoPhoto.html">Reconnaissance fonction</a>
+				</li>
 			</ul>
 			
 		</nav>
@@ -37,30 +40,28 @@
 
 			<section>
 				
-				<article>
+				<article class="green">
 					<p>On nomme fourmi de Langton un automate cellulaire (voir machine de Turing) bidimensionnel comportant un jeu de règles très simples. On lui a donné le nom de Christopher Langton, son inventeur. <em>Wikipédia.</em></p>
 				</article>
 
-				<article>
-					<label for="speed">Vitesse : </label><input type="number" value="10" id="speed" min="1" max="1000" />
-					<button type="submit" onclick="launch();">ok</button>
-				</article>
-
-				<article>
+				<article class="blue">
 					<p>Comportement : La fourmi change la couleur de chaque case sur laquelle elle passe.<br />
 					<span style="margin-left: 9em;"></span>Si la fourmi se trouve sur une case noire elle tourne à gauche et avance.<br />
 					<span style="margin-left: 9em;">Sinon elle tourne à droite et avance.<br /></p>
 				</article>
 
-				<article>
-					<canvas id="fourmi" height="600" width="600"></canvas>	<!-- x1 -->
+				<article class="red">
+					<label for="speed">Vitesse : </label><input type="number" value="10" id="speed" min="1" max="1000" />
+					<button type="submit" onclick="launch();">ok</button>
 				</article>
+
+				<canvas id="fourmi" height="600" width="600"></canvas>	<!-- x1 -->
 
 				<div class="alignArticle">
 					<article class="aligner">
 						<p>Nombre de pas : <span id="frameDisplay"></span></p>
 					</article>
-					<article class="aligner">
+					<article class="aligner grey">
 						<p>Notes : La fourmi cogne contre les murs.<br />
 						<span style="margin-left: 4em;">La fourmi est folle ??</p>
 					</article>
@@ -70,7 +71,7 @@
 		</div>
 
 		<script type="text/javascript" src="graphs.js"></script>
-		<script>
+		<script type="text/javascript">
 
 			/* ------ Menu ------ */
 				

@@ -161,38 +161,42 @@ div.alignArticle
 	margin: 12px 25px 12px 12px;
 }
 
-section > article:nth-child(2)
+article.red
 {
 	background-color: #faa;
 	border-left: 5px solid red;
 }
 
-section > article:nth-child(1)
+article.green
 {
 	background-color: #afa;
 	border-left: 5px solid green;
 }
 
-section > article:nth-child(3)
+article.blue
 {
 	background-color: #aaf;
 	border-left: 5px solid blue;
 }
 
-article.aligner:nth-child(1)
+article.grey
+{
+	background-color: #aaa;
+	border-left: 5px solid dimgrey;
+}
+
+article.aligner:nth-child(2n + 1)
 {
 	width: 50%;
 	margin: 0 25px 0 0;
 	align-self: flex-start;
 }
 
-article.aligner:nth-child(2)
+article.aligner:nth-child(2n)
 {
 	width: 50%;
 	margin: 0;
 	align-self: flex-start;
-	background-color: #aaa;
-	border-left: 5px solid dimgrey;
 }
 
 p
@@ -203,9 +207,19 @@ p
 canvas
 {
 	display: block;
-	margin: 0 auto 0.5em auto;
+	margin: 1em auto 1em auto;
 	border: 3px solid orange;
 	border-radius: 2px;
+}
+
+input
+{
+	margin: 0.2em;
+}
+
+input[placeholder]
+{
+	width: 9em;
 }
 
 /*----------------- /Contenu ---------------------*/

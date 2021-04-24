@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Khwârizmî</title>
+
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+
+		<meta charset="UTF-8">
+	</head>
+
+	<body>	
+
+		<nav>
+			<h2>MENU</h2>
+			<ul>
+				<li onclick="menudisplay(1)">I - Automates cellulaire
+					<a class="displayNone1" href="index.html">Wolfram</a>
+					<a class="displayNone1" href="kFourmi.html">Langton</a>
+					<a class="displayNone1" href="#">Conway soon</a>
+				</li>
+				<li onclick="menudisplay(2)">II - Fractal
+					<a class="displayNone2" href="#top">Mandelbrot</a>
+					<a class="displayNone2" href="#">Julia soon</a>
+					<a class="displayNone2" href="#">Menger soon??</a>
+				</li>
+				<li onclick="menudisplay(3)">III - Outils
+					<a class="displayNone3" href="kRecoPhoto.html">Reconnaissance fonction</a>
+				</li>
+			</ul>
+			
+		</nav>
+
+		<div class="layout">
+			<header>
+				<h1>Khwârizmî</h1>
+			</header>
+
+			<section>
+				
+				<article class="green">
+					<p>L'ensemble de Mandelbrot tire ses origines de la dynamique complexe, un domaine défriché par les mathématiciens français Pierre Fatou et Gaston Julia au début du xxe siècle.<br />
+					La première représentation de cet ensemble apparaît en 1978 dans un article de Robert W. Brooks et Peter Matelski. <em>Wikipédia.</em></p>
+				</article>
+
+				<article class="blue">
+					<p>Comportement : z<sub>0</sub> = 0<span style="margin-left: 9em;">L'image est situé dans un plan complexe, les axes sont tracés en blanc.<br />
+					<span style="margin-left: 9em;">z<sub>n+1</sub> = z<sub>n</sub><sup>2</sup></span> + c<br /></p>
+				</article>
+
+
+				<article class="red">
+					<label for="speed">Vitesse </label><input type="number" value="10" id="speed" min="1" max="1000" />
+					<button type="submit" onclick="launch();">ok</button>
+				</article>
+
+				<canvas id="mand" height="660" width="990"></canvas>	<!-- x1.5 -->
+
+				<div class="alignArticle">
+					<article class="aligner">
+						<p>Dimension de l'image : <span id="dimCanevas"></span></p>
+					</article>
+					<article class="aligner" class="grey">
+						<p>Notes : Tous les contrôles ne sont pas encore implémentés</p>
+					</article>
+				</div>
+
+			</section>
+		</div>
+
+		<script type="text/javascript">
+
+			/* ------ Menu ------ */
+				
+			function menudisplay(numb)	// >onclick< ou addEventListener ??
+			{
+				for (var i = 0; i < document.getElementsByClassName("displayNone" + numb).length; i++) 
+				{
+					if(document.getElementsByClassName("displayNone" + numb)[i].style.display!="block")
+					{
+						document.getElementsByClassName("displayNone" + numb)[i].style.display="block";
+					}
+					else
+					{
+						document.getElementsByClassName("displayNone" + numb)[i].style.display="none";
+					}
+				}
+			}
+
+			/* ------- Ensemble ------ */
+			
+			const canvas = document.getElementById('mand');
+			const ctx = canvas.getContext('2d');
+
+			ctx.fillStyle = 'rgb(0, 0, 0)';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			const scalex = 3. / canvas.width;	//modif ?
+			const scaley = 2. / canvas.height;	//modif ?
+
+			ctx.fillStyle = 'rgb(255, 255, 255)';	//axes
+			ctx.fillRect(2 * canvas.width / 3, 0, 1, canvas.height);
+			ctx.fillRect(0, canvas.height / 2, canvas.width, 1);
+
+			let z = [0., 0.];
+			let c = [0., 0.];
+			let rang;
+			const rangMax = 50;	//modif ?
+
+			let i = 0;
+			let inter;
+
+			document.getElementById('dimCanevas').textContent = canvas.width + ' x ' + canvas.height + ' px';
+
+			function behaviour() /*(let i = 0; i < canvas.width; i++)*/
+			{
+				c[0] = (i * scalex) - 2;
+
+				for (let j = 0; j < canvas.height; j++)
+				{
+					z = [0., 0.];
+
+					c[1] = (j * scaley) - 1;
+
+					for (rang = 0; (rang < rangMax) && ((z[0]*z[0] + z[1]*z[1]) < 4); rang++)
+					{
+						z = [z[0]*z[0] - z[1]*z[1] + c[0], 2. * z[0] * z[1] + c[1]];
+					}
+
+					if(rang == rangMax)	// converge
+					{
+						ctx.fillStyle = 'black';
+						ctx.fillRect(i, j, 1, 1);
+					}
+					else	// diverge
+					{
+						ctx.fillStyle = 'rgba(255, 100, 255, ' + (rang / rangMax) + ')';
+						ctx.fillRect(i, j, 1, 1);
+					}
+				}
+				i++;
+				if(i >= canvas.width) clearInterval(inter);
+			}
+
+			function launch()
+			{
+				clearInterval(inter);
+				inter = setInterval(behaviour, Number(document.getElementById('speed').value));
+			}
+
+		</script>
+
+	</body>
+
+</html>
+

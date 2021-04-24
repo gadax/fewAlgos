@@ -16,16 +16,19 @@
 		<nav>
 			<h2>MENU</h2>
 			<ul>
-				<li onclick="menudisplay(1)">I - Automates cellulaire</li>
-				<a class="displayNone1" href="#top">Wolfram</a>
-				<a class="displayNone1" href="kFourmi.html">Langton</a>
-				<a class="displayNone1" href="kVie.html">Conway soon</a>
-				<li onclick="menudisplay(2)">II - Fractal</li>
-				<a class="displayNone2" href="kMand.html">Mandelbrot</a>
-				<a class="displayNone2" href="#">Julia soon</a>
-				<a class="displayNone2" href="#">Menger soon??</a>
-				<li onclick="menudisplay(3)">III - Outils</li>
-				<a class="displayNone3" href="#">Reconnaissance fonction</a>
+				<li onclick="menudisplay(1)">I - Automates cellulaire
+					<a class="displayNone1" href="#top">Wolfram</a>
+					<a class="displayNone1" href="kFourmi.html">Langton</a>
+					<a class="displayNone1" href="#">Conway soon</a>
+				</li>
+				<li onclick="menudisplay(2)">II - Fractal
+					<a class="displayNone2" href="kMandelbrot.html">Mandelbrot</a>
+					<a class="displayNone2" href="#">Julia soon</a>
+					<a class="displayNone2" href="#">Menger soon??</a>
+				</li>
+				<li onclick="menudisplay(3)">III - Outils
+					<a class="displayNone3" href="kRecoPhoto.html">Reconnaissance fonction</a>
+				</li>
 			</ul>
 			
 		</nav>
@@ -37,11 +40,20 @@
 
 			<section>
 				
-				<article>
+				<article class="green">
 					<p>Parmi les automates cellulaires, certains (à une seule dimension) sont plus « simples » que d’autres. C’est le cas de l’automate de Wolfram, que l’on doit au mathématicien et physicien britannique Stephen Wolfram (né en 1959), connu pour avoir créé le logiciel Mathematica (Wolfram Research, 1988). <em>Tangente Mag.</em></p>
 				</article>
 
-				<article>
+				<article class="blue">
+					<p>Comportement : Une cellule est placée arbitrairement au centre de la première ligne du plan (en haut).<br />
+					<span style="margin-left: 9em;"></span>Pour chaque pixel de la première ligne on vérifie si une cellule est présente et si il y en a à sa droite et à sa gauche.<br />
+					<span style="margin-left: 9em;"></span>Les règles si-dessus permettent de déterminer si il y a, ou non, naissance d'une cellule dans chaque cas.
+					<br />
+					<span style="margin-left: 9em;"></span>Si il y a naissance d'une cellule celle-ci est placée en dessous du centre des trois pixels précédement considérés.
+					<br /></p>
+				</article>
+
+				<article class="red">
 					<label>Règle </label>
 					<input type="checkbox" id="rule1" onclick="displayRule()" />	<!-- nnn -->
 					<input type="checkbox" id="rule2" onclick="displayRule()" />	<!-- nnb -->
@@ -56,25 +68,15 @@
 					<button type="submit" onclick="launch();">ok</button>
 				</article>
 
-				<article>
-					<p>Comportement : Une cellule est placée arbitrairement au centre de la première ligne du plan (en haut).<br />
-					<span style="margin-left: 9em;"></span>Pour chaque pixel de la première ligne on vérifie si une cellule est présente et si il y en a à sa droite et à sa gauche.<br />
-					<span style="margin-left: 9em;"></span>Les règles si-dessus permettent de déterminer si il y a, ou non, naissance d'une cellule dans chaque cas.
-					<br />
-					<span style="margin-left: 9em;"></span>Si il y a naissance d'une cellule celle-ci est placée en dessous du centre des trois pixels précédement considérés.
-					<br /></p>
-				</article>
+				<canvas id="pyramide" height="600" width="1200"></canvas>	<!-- x2 -->
 
-				<article>
-					<canvas id="pyramide" height="600" width="1200"></canvas>	<!-- x2 -->
-					<canvas id="model" height="200" width="1200"></canvas>	<!-- x6 -->
-				</article>
+				<canvas id="model" height="200" width="1200"></canvas>	<!-- x6 -->
 
 				<div class="alignArticle">
 					<article class="aligner">
 						<p id='nbCells'>Nombre de cellules : 1</p>
 					</article>
-					<article class="aligner">
+					<article class="aligner grey">
 						<p>Notes : Le graphique donne la répartition des cellules en fonction des occurence (cf. fonction de Riemann)</p>
 					</article>
 				</div>
