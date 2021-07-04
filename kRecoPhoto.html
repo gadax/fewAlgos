@@ -24,7 +24,7 @@
 				<li onclick="menudisplay(2)">II - Fractal
 					<a class="displayNone2" href="kMandelbrot.html">Mandelbrot</a>
 					<a class="displayNone2" href="#">Julia soon</a>
-					<a class="displayNone2" href="#">Menger soon??</a>
+					<a class="displayNone2" href="kMenger.html">Menger</a>
 				</li>
 				<li onclick="menudisplay(3)">III - Outils
 					<a class="displayNone3" href="#top">Reconnaissance fonction</a>
@@ -293,9 +293,9 @@
 				{
 					// Dimension de Minkowski-Bouligand -> biai algo -> car plus de valeur en diago pour les fonction trigo et poly
 					// Dimension de Hausdorff -> a peu près impartial vis-a-vis des fonctions
-					let rIsOk = ((r - permissivite) < imgData.data[i]) && (imgData.data[i] < (r + permissivite));
-					let gIsOk = ((g - permissivite) < imgData.data[i + 1]) && (imgData.data[i + 1] < (g + permissivite));;
-					let bIsOk = ((b - permissivite) < imgData.data[i + 2]) && (imgData.data[i + 2] < (b + permissivite));;
+					let rIsOk = ((r - permissivite) < imgData.data[i]) && (imgData.data[i] < (r + permissivite)),
+						gIsOk = ((g - permissivite) < imgData.data[i + 1]) && (imgData.data[i + 1] < (g + permissivite)),
+						bIsOk = ((b - permissivite) < imgData.data[i + 2]) && (imgData.data[i + 2] < (b + permissivite));
 					if(rIsOk && gIsOk && bIsOk)
 					{
 						let y = (img.height - (((i/4) - ((i / 4) % img.width)) / img.width)) - ordonneesZero;
