@@ -94,13 +94,13 @@
 			const canvas = document.getElementById('mand');
 			const ctx = canvas.getContext('2d');
 
-			ctx.fillStyle = 'rgb(0, 0, 0)';
+			ctx.fillStyle = 'black'; /* ? */
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 			const scalex = 3. / canvas.width;	//modif ?
 			const scaley = 2. / canvas.height;	//modif ?
 
-			ctx.fillStyle = 'rgb(255, 255, 255)';	//axes
+			ctx.fillStyle = 'white';	//axes
 			ctx.fillRect(2 * canvas.width / 3, 0, 1, canvas.height);
 			ctx.fillRect(0, canvas.height / 2, canvas.width, 1);
 

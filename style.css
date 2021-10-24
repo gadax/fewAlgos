@@ -1,4 +1,4 @@
-body, menu, ul, h1, h2, h3, p
+body, nav, ul, h1, h2, h3, p
 {
 	margin: 0;
 	padding: 0;
@@ -59,7 +59,7 @@ li:active
 
 a
 {
-	display: block;
+	display: none;
 	text-decoration: none;
 	background-color: #556;
 	text-align: center;
@@ -80,21 +80,9 @@ a:active
 	border: 1px inset grey;
 }
 
-[class^="displayNone"]
-{
-	display: none;
-	background-color: #445;
-}
-
-hr
-{
-	/*  a voir   */
-	width: 150px;
-}
-
 /*----------------- /Menu ---------------------*/
 
-div.layout
+main
 {
 	display: block;
 	width: 80%;
@@ -139,7 +127,6 @@ h1
 
 section
 {
-	padding-top: 90px;
 	display: flex;
 	flex-direction: column;
 }
