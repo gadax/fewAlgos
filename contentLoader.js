@@ -7,7 +7,7 @@ if (window.fetch)	// fetch
 				return response.text();
 
 			}).then(function(body) {
-				document.getElementById('layout').innerHTML = body;
+				document.getElementById('dynContent').innerHTML = body;
 			});
 		});
 	});

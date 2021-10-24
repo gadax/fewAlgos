@@ -1,0 +1,178 @@
+<article class="green">
+	<p>Parmi les automates cellulaires, certains (à une seule dimension) sont plus « simples » que d’autres. C’est le cas de l’automate de Wolfram, que l’on doit au mathématicien et physicien britannique Stephen Wolfram (né en 1959), connu pour avoir créé le logiciel Mathematica (Wolfram Research, 1988). <em>Tangente Mag.</em></p>
+</article>
+
+<article class="blue">	<!-- a transformer en liste -->
+	<p>Comportement : Une cellule est placée arbitrairement au centre de la première ligne du plan (en haut).<br />
+		<span style="margin-left: 9em;"></span>Pour chaque pixel de la première ligne on vérifie si une cellule est présente et si il y en a à sa droite et à sa gauche.<br />
+		<span style="margin-left: 9em;"></span>Les règles si-dessus permettent de déterminer si il y a, ou non, naissance d'une cellule dans chaque cas.
+		<br />
+		<span style="margin-left: 9em;"></span>Si il y a naissance d'une cellule celle-ci est placée en dessous du centre des trois pixels précédement considérés.
+		<br />
+	</p>
+</article>
+
+<article class="red">
+	<label>Règle </label>
+	<input type="checkbox" id="rule1" onclick="displayRule()" />	<!-- nnn -->
+	<input type="checkbox" id="rule2" onclick="displayRule()" />	<!-- nnb -->
+	<input type="checkbox" id="rule3" onclick="displayRule()" />	<!-- nbn -->
+	<input type="checkbox" id="rule4" onclick="displayRule()" />	<!-- nbb -->
+	<input type="checkbox" id="rule5" onclick="displayRule()" />	<!-- bnn -->
+	<input type="checkbox" id="rule6" onclick="displayRule()" />	<!-- bnb -->
+	<input type="checkbox" id="rule7" onclick="displayRule()" />	<!-- bbn -->
+	<input type="checkbox" id="rule8" onclick="displayRule()" />	<!-- bbb -->
+	<span id='rule'></span>
+	<br /><label for="speed">Vitesse </label><input type="number" value="10" id="speed" min="1" max="1000" />
+	<button type="submit" onclick="launch();">ok</button>
+</article>
+
+<canvas id="pyramide" height="600" width="1200"></canvas>	<!-- x2 -->
+
+<canvas id="model" height="200" width="1200"></canvas>	<!-- x6 -->
+
+<div class="alignArticle">
+	<article class="aligner">
+		<p id='nbCells'>Nombre de cellules : 1</p>
+	</article>
+	<article class="aligner grey">
+		<p>Notes : Le graphique donne la répartition des cellules en fonction des occurence (cf. fonction de Riemann)</p>
+	</article>
+</div>
+
+<script>
+
+	function displayRule()
+	{
+		let rule = 0;
+		if(document.getElementById('rule1').checked) rule += 128;
+		if(document.getElementById('rule2').checked) rule += 64;
+		if(document.getElementById('rule3').checked) rule += 32;
+		if(document.getElementById('rule4').checked) rule += 16;
+		if(document.getElementById('rule5').checked) rule += 8;
+		if(document.getElementById('rule6').checked) rule += 4;
+		if(document.getElementById('rule7').checked) rule += 2;
+		if(document.getElementById('rule8').checked) rule += 1;
+
+
+		document.getElementById('rule').textContent = 'Règle : ' + String(rule);
+	}
+
+	displayRule();
+
+
+	const canvas = document.getElementById('pyramide');
+	const ctx = canvas.getContext('2d');
+
+	ctx.fillStyle = 'rgb(120, 120, 130)';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	// setup
+	let y = 0;
+	let aCells = [1];
+	let cells;
+
+
+	ctx.fillStyle = 'rgb(0, 0, 0)';
+	ctx.fillRect(canvas.width / 2, 0, 1, 1);
+
+	function fillRectCell(x, y, sw, sh)
+	{
+		ctx.fillRect(x, y, sw, sh);
+		cells++;
+	}
+
+
+	function behaviour()
+	{
+		cells = 0;
+
+		for(let i = 1; i < (canvas.width - 2); i++)
+		{
+			let pixData = ctx.getImageData(i - 1, y, 3, 1);
+
+			let backInBlack = [(pixData.data[0] == 0) && (pixData.data[1] == 0) && (pixData.data[2] == 0),
+			(pixData.data[4] == 0) && (pixData.data[5] == 0) && (pixData.data[6] == 0),
+			(pixData.data[8] == 0) && (pixData.data[9] == 0) && (pixData.data[10] == 0)];
+
+			if(backInBlack[0])
+			{
+				if(backInBlack[1])
+				{
+					(backInBlack[2]) ? ((document.getElementById('rule1').checked) && fillRectCell(i, y + 1, 1, 1))	//nnn
+					: ((document.getElementById('rule2').checked) && fillRectCell(i, y + 1, 1, 1));	//nnb
+				}
+				else if(backInBlack[2])
+				{
+					if(document.getElementById('rule3').checked) fillRectCell(i, y + 1, 1, 1);	//nbn
+				}
+				else
+				{
+					if(document.getElementById('rule4').checked) fillRectCell(i, y + 1, 1, 1);	//nbb
+				}
+			}
+			else if(backInBlack[1])
+			{
+				if(backInBlack[2])
+				{
+					if(document.getElementById('rule5').checked) fillRectCell(i, y + 1, 1, 1);	//bnn
+				}
+				else
+				{
+					if(document.getElementById('rule6').checked) fillRectCell(i, y + 1, 1, 1);	//bnb
+				}
+			}
+			else if(backInBlack[2])
+			{
+				if(document.getElementById('rule7').checked) fillRectCell(i, y + 1, 1, 1);	//bbn
+			}
+			else
+			{
+				if(document.getElementById('rule8').checked) fillRectCell(i, y + 1, 1, 1);	//bbb
+			}
+
+		}
+
+		document.getElementById('nbCells').textContent += ' - ' + cells;
+		y++;
+		aCells.push(cells);
+
+		if(y >= canvas.height)
+		{
+			clearInterval(inter);
+			refresh();
+		}
+	}
+
+	let inter = 1;
+
+	function launch()
+	{
+		clearInterval(inter);
+		inter = setInterval(behaviour, Number(document.getElementById('speed').value));
+	}
+
+
+	/* ------ Graph ------ */
+
+
+	const canvasModel = document.getElementById('model');
+	const ctxModel = canvasModel.getContext('2d');
+
+	ctxModel.fillStyle = 'rgb(70, 70, 70)';
+	ctxModel.fillRect(0, 0, canvasModel.width, canvasModel.height);
+
+	height = canvasModel.height;	// définient dans "graphs.js"
+	width = canvasModel.width;
+
+	grid(ctxModel);
+
+	function refresh()
+	{
+		trace(ctxModel, aCells, 0, 1.1*Math.max(...aCells), '0', '150', '150');
+		scale(ctxModel, 0, 1.1*Math.max(...aCells), aCells.length);
+	}
+
+	
+
+</script>
