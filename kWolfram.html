@@ -17,14 +17,14 @@
 
 <article class="red">
 	<label>Règle </label>
-	<input type="checkbox" id="rule1" onclick="displayRule()" />	<!-- nnn -->
-	<input type="checkbox" id="rule2" onclick="displayRule()" />	<!-- nnb -->
-	<input type="checkbox" id="rule3" onclick="displayRule()" />	<!-- nbn -->
-	<input type="checkbox" id="rule4" onclick="displayRule()" />	<!-- nbb -->
-	<input type="checkbox" id="rule5" onclick="displayRule()" />	<!-- bnn -->
-	<input type="checkbox" id="rule6" onclick="displayRule()" />	<!-- bnb -->
-	<input type="checkbox" id="rule7" onclick="displayRule()" />	<!-- bbn -->
-	<input type="checkbox" id="rule8" onclick="displayRule()" />	<!-- bbb -->
+	<input type="checkbox" id="rule1">	<!-- nnn -->
+	<input type="checkbox" id="rule2">	<!-- nnb -->
+	<input type="checkbox" id="rule3">	<!-- nbn -->
+	<input type="checkbox" id="rule4">	<!-- nbb -->
+	<input type="checkbox" id="rule5">	<!-- bnn -->
+	<input type="checkbox" id="rule6">	<!-- bnb -->
+	<input type="checkbox" id="rule7">	<!-- bbn -->
+	<input type="checkbox" id="rule8">	<!-- bbb -->
 	<span id='rule'></span>
 	<br /><label for="speed">Vitesse </label><input type="number" value="10" id="speed" min="1" max="1000" />
 	<button type="submit" onclick="launch();">ok</button>
@@ -44,6 +44,12 @@
 </div>
 
 <script>
+
+	document.getElementsByTagName('input').forEach((ele) => {
+		ele.addEventListener('click', (e) => {
+			displayRule();
+		});
+	});
 
 	function displayRule()
 	{
@@ -175,7 +181,5 @@
 		trace(ctxModel, aCells, 0, 1.1*Math.max(...aCells), '0', '150', '150');
 		scale(ctxModel, 0, 1.1*Math.max(...aCells), aCells.length);
 	}
-
-
 
 </script>
