@@ -27,7 +27,7 @@
 	<input type="checkbox" id="rule8">	<!-- bbb -->
 	<span id='rule'></span>
 	<br /><label for="speed">Vitesse </label><input type="number" value="10" id="speed" min="1" max="1000" />
-	<button type="submit" onclick="launch();">ok</button>
+	<button type="submit" id="launcher">ok</button>
 </article>
 
 <canvas id="pyramide" height="600" width="1200"></canvas>	<!-- x2 -->
@@ -45,11 +45,12 @@
 
 <script>
 
-	document.getElementsByTagName('input').forEach((ele) => {
+	for(ele of document.getElementsByTagName('input'))
+	{
 		ele.addEventListener('click', (e) => {
 			displayRule();
 		});
-	});
+	}
 
 	function displayRule()
 	{
@@ -154,6 +155,8 @@
 	}
 
 	let inter = 1;
+
+	document.getElementById('launcher').addEventListener('click', launch);
 
 	function launch()
 	{
