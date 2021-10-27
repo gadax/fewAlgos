@@ -43,6 +43,7 @@
 	</article>
 </div>
 
+
 <script>
 
 	for(ele of document.getElementsByTagName('input'))
@@ -93,7 +94,7 @@
 	}
 
 
-	function behaviorWolf()
+	function behaviour()
 	{
 		cells = 0;
 
@@ -109,8 +110,18 @@
 			{
 				if(backInBlack[1])
 				{
-					(backInBlack[2]) ? ((document.getElementById('rule1').checked) && fillRectCell(i, y + 1, 1, 1))	//nnn
-					: ((document.getElementById('rule2').checked) && fillRectCell(i, y + 1, 1, 1));	//nnb
+					//(backInBlack[2]) ? ((document.getElementById('rule1').checked) && fillRectCell(i, y + 1, 1, 1))	//nnn
+					//: ((document.getElementById('rule2').checked) && fillRectCell(i, y + 1, 1, 1));	//nnb
+
+					if(backInBlack[2] && document.getElementById('rule1').checked)
+					{
+						fillRectCell(i, y + 1, 1, 1);	//nnn
+					}
+					else if(!backInBlack[2] && document.getElementById('rule2').checked)
+					{
+						fillRectCell(i, y + 1, 1, 1);	//nnb
+					}
+
 				}
 				else if(backInBlack[2])
 				{
