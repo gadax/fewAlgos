@@ -44,13 +44,11 @@
 </div>
 
 
-<script>
+<script defer>
 
 	for(ele of document.getElementsByTagName('input'))
 	{
-		ele.addEventListener('click', (e) => {
-			displayRule();
-		});
+		ele.addEventListener('click', displayRule);
 	}
 
 	function displayRule()

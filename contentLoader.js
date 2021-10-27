@@ -12,6 +12,7 @@ window.addEventListener('load', () => {
 					}).then(function(body) {
 
 						//console.log([...body.matchAll(/<script[\S\s]*<\/script>/g)]);
+						//console.log(body);
 
 						for(let scriptText of body.matchAll(/<script[\S\s]*<\/script>/g))
 						{
@@ -22,10 +23,9 @@ window.addEventListener('load', () => {
 								//console.log(scriptText[0].replace(/(<([^>]+)>)/gi, ''));
 								//uniqueScript.textContent = 'console.log(\'hello\')';
 								/* enleve les balises */
-								uniqueScript.textContent = String(scriptText[0].replace(/(<([^>]+)>)/gi, ''));
+								uniqueScript.textContent = scriptText[0].replace(/<script( [.^>]*)*>/g, '').replace(/<\/script>/g, '');
 								console.log(uniqueScript.textContent);
 								document.body.appendChild(uniqueScript);
-								//console.log(document.querySelector('body'));
 							}
 						}
 
