@@ -15,7 +15,7 @@ window.addEventListener('load', () => {
 						return response.text();
 
 					}).then(function(body) {
-						// retire les scriptsdu contenu visible
+						// retire les scripts du contenu visible
 						document.getElementById('dynContent').innerHTML = body.replace(/<script[\S\s]*?<\/script>/g, '');
 
 						// retire les eventuelles anciens scripts
@@ -35,7 +35,7 @@ window.addEventListener('load', () => {
 							}
 						}
 					});
-				}, {once: true}); // remettre l'event listener après avoir utilisé celui d'un autre lien
+				}, {once: false}); // remettre l'event listener après avoir utilisé celui d'un autre lien ?
 		}
 	}
 	else	// XMLHttpRequest
