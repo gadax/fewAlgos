@@ -32,96 +32,92 @@
 
 <script type="text/javascript">
 
-	let sdf = {
+	document.getElementById('launcher').addEventListener('click', launch);
 
-		document.getElementById('launcher').addEventListener('click', launch);
+	/* ------ Fourmi ------*/
 
-		/* ------ Fourmi ------*/
+	const canvas = document.getElementById('fourmi');
+	const ctx = canvas.getContext('2d');
 
-		const canvas = document.getElementById('fourmi');
-		const ctx = canvas.getContext('2d');
+	ctx.fillStyle = 'rgb(150, 150, 160)';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		ctx.fillStyle = 'rgb(150, 150, 160)';
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+	let x = canvas.width / 4;
+	let y = canvas.height / 4;
+	let dir = 0;
+	let frame = 0;
 
-		let x = canvas.width / 4;
-		let y = canvas.height / 4;
-		let dir = 0;
-		let frame = 0;
+	function drawCase(x, y, r, g, b)
+	{
+		ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+		ctx.fillRect(2 * x, 2 * y, 2, 2);
+		frame++;
+	}
 
-		function drawCase(x, y, r, g, b)
+	function behaviour()
+	{
+		let pixData = ctx.getImageData(2 * x, 2 * y, 1, 1);
+
+		if((pixData.data[0] == 0) && (pixData.data[1] == 0) && (pixData.data[2] == 0))
 		{
-			ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
-			ctx.fillRect(2 * x, 2 * y, 2, 2);
-			frame++;
-		}
+			drawCase(x, y, 200, 200, 200);
 
-		function behaviour()
-		{
-			let pixData = ctx.getImageData(2 * x, 2 * y, 1, 1);
-
-			if((pixData.data[0] == 0) && (pixData.data[1] == 0) && (pixData.data[2] == 0))
+			if(dir == 0)
 			{
-				drawCase(x, y, 200, 200, 200);
-
-				if(dir == 0)
-				{
-					dir = 3;	// avec 4 ???
-					x--;
-				}
-				else if(dir == 1)
-				{
-					dir--;
-					y--;
-				}
-				else if(dir == 2)
-				{
-					dir--;
-					x++;
-				}
-				else
-				{
-					dir--;
-					y++;
-				}
+				dir = 3;	// avec 4 ???
+				x--;
 			}
-			else	/* (pixData.data[0] == 255) && (pixData.data[1] == 255) && (pixData.data[2] == 255) */
+			else if(dir == 1)
 			{
-				drawCase(x, y, 0, 0, 0);
-
-				if(dir == 0)
-				{
-					dir++;
-					x++;
-				}
-				else if(dir == 1)
-				{
-					dir++;
-					y++;
-				}
-				else if(dir == 2)
-				{
-					dir++;
-					x--;
-				}
-				else
-				{
-					dir = 0;
-					y--;
-				}
+				dir--;
+				y--;
 			}
-
-			document.getElementById("frameDisplay").textContent = frame.toString();
+			else if(dir == 2)
+			{
+				dir--;
+				x++;
+			}
+			else
+			{
+				dir--;
+				y++;
+			}
 		}
-
-		let inter;
-
-		function launch()
+		else	/* (pixData.data[0] == 255) && (pixData.data[1] == 255) && (pixData.data[2] == 255) */
 		{
-			clearInterval(inter);
-			inter = setInterval(behaviour, Number(document.getElementById('speed').value));
+			drawCase(x, y, 0, 0, 0);
+
+			if(dir == 0)
+			{
+				dir++;
+				x++;
+			}
+			else if(dir == 1)
+			{
+				dir++;
+				y++;
+			}
+			else if(dir == 2)
+			{
+				dir++;
+				x--;
+			}
+			else
+			{
+				dir = 0;
+				y--;
+			}
 		}
 
-	};
+		document.getElementById("frameDisplay").textContent = frame.toString();
+	}
 
+	let inter;
+
+	function launch()
+	{
+		clearInterval(inter);
+		inter = setInterval(behaviour, Number(document.getElementById('speed').value));
+	}
+	
 </script>

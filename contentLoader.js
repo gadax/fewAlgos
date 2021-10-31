@@ -1,6 +1,35 @@
 window.addEventListener('load', () => {
 	if (window.fetch)	// fetch
 	{
+		if(document.location.hash != '')
+		{
+			console.log(document.location.hash);
+			fetch('https://gadax.github.io/fewAlgos/' + document.location.hash.replace('#', '')).then(function(response) {
+				return response.text();
+
+			}).then(function(body) {
+				// retire les scripts du contenu visible
+				document.getElementById('dynContent').innerHTML = body.replace(/<script[\S\s]*?<\/script>/g, '');
+
+				// retire les eventuelles anciens scripts
+				document.getElementById('staticScripts').innerHTML = '';
+
+				// récupere tous les scripts
+				for(let scriptText of body.matchAll(/<script[\S\s]*?<\/script>/g))
+				{
+					if(scriptText[0] != undefined)
+					{
+						let uniqueScript = document.createElement('script');
+						uniqueScript.type = 'text/javascript';
+
+						uniqueScript.textContent = scriptText[0].replace(/<script[\S\s]*?>/g, '').replace(/<\/script>/g, '');
+
+						document.getElementById('staticScripts').appendChild(uniqueScript);
+					}
+				}
+			});
+		}
+
 		for(ele of document.getElementsByTagName('a'))
 		{
 			ele.addEventListener('click', (e) => {
@@ -9,33 +38,12 @@ window.addEventListener('load', () => {
 			});
 
 			ele.addEventListener('click', (e) => {
-				document.location.hash = e.target.getAttribute('href').replace(/\.\w+/, '');
-
-				fetch('https://gadax.github.io/fewAlgos/' + e.target.getAttribute('href')).then(function(response) {
-						return response.text();
-
-					}).then(function(body) {
-						// retire les scripts du contenu visible
-						document.getElementById('dynContent').innerHTML = body.replace(/<script[\S\s]*?<\/script>/g, '');
-
-						// retire les eventuelles anciens scripts
-						document.getElementById('staticScripts').innerHTML = '';
-
-						// récupere tous les scripts
-						for(let scriptText of body.matchAll(/<script[\S\s]*?<\/script>/g))
-						{
-							if(scriptText[0] != undefined)
-							{
-								let uniqueScript = document.createElement('script');
-								uniqueScript.type = 'text/javascript';
-
-								uniqueScript.textContent = scriptText[0].replace(/<script[\S\s]*?>/g, '').replace(/<\/script>/g, '');
-
-								document.getElementById('staticScripts').appendChild(uniqueScript);
-							}
-						}
-					});
-				}, {once: false}); // remettre l'event listener après avoir utilisé celui d'un autre lien ?
+				if(document.location.hash != e.target.getAttribute('href'))
+				{
+					document.location.hash = e.target.getAttribute('href');
+					document.location.reload();
+				}
+			}/*, {once: false}*/); // remettre l'event listener après avoir utilisé celui d'un autre lien ?
 		}
 	}
 	else	// XMLHttpRequest
