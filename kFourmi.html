@@ -1,183 +1,123 @@
-<!DOCTYPE html>
+<!-- Ressource statique pour Fourmi de Langton -->
 
-<html>
 
-	<head>
-		<title>Khwârizmî</title>
+<article class="green">
+	<p>On nomme fourmi de Langton un automate cellulaire (voir machine de Turing) bidimensionnel comportant un jeu de règles très simples. On lui a donné le nom de Christopher Langton, son inventeur. <em>Wikipédia.</em></p>
+</article>
 
-		<link rel="stylesheet" type="text/css" href="style.css">
-		<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+<article class="blue">
+	<p>Comportement : La fourmi change la couleur de chaque case sur laquelle elle passe.<br>
+		<span style="margin-left: 9em;"></span>Si la fourmi se trouve sur une case noire elle tourne à gauche et avance.<br>
+		<span style="margin-left: 9em;"></span>Sinon elle tourne à droite et avance.<br>
+	</p>
+</article>
 
-		<meta charset="UTF-8">
-	</head>
+<article class="red">
+	<label for="speed">Vitesse : </label><input type="number" value="10" id="speed" min="1" max="1000">
+	<input type="submit" id="launcher" value="ok">
+</article>
 
-	<body>	
+<canvas id="fourmi" height="600" width="600"></canvas>	<!-- x1 -->
 
-		<nav>
-			<h2>MENU</h2>
-			<ul>
-				<li onclick="menudisplay(1)">I - Automates cellulaire
-					<a class="displayNone1" href="index.html">Wolfram</a>
-					<a class="displayNone1" href="#top">Langton</a>
-					<a class="displayNone1" href="#">Conway soon</a>
-				</li>
-				<li onclick="menudisplay(2)">II - Fractal
-					<a class="displayNone2" href="kMandelbrot.html">Mandelbrot</a>
-					<a class="displayNone2" href="#">Julia soon</a>
-					<a class="displayNone2" href="kMenger.html">Menger</a>
-				</li>
-				<li onclick="menudisplay(3)">III - Outils
-					<a class="displayNone3" href="kRecoPhoto.html">Reconnaissance fonction</a>
-				</li>
-			</ul>
-			
-		</nav>
+<div class="alignArticle">
+	<article class="aligner">
+		<p>Nombre de pas : <span id="frameDisplay"></span></p>
+	</article>
+	<article class="aligner grey">
+		<p>Notes : La fourmi cogne contre les murs.<br>
+			<span style="margin-left: 4em;"></span>La fourmi est folle ??
+		</p>
+	</article>
+</div>
 
-		<div class="layout">
-			<header>
-				<h1>Khwârizmî</h1>
-			</header>
+<script type="text/javascript">
 
-			<section>
-				
-				<article class="green">
-					<p>On nomme fourmi de Langton un automate cellulaire (voir machine de Turing) bidimensionnel comportant un jeu de règles très simples. On lui a donné le nom de Christopher Langton, son inventeur. <em>Wikipédia.</em></p>
-				</article>
+	document.getElementById('launcher').addEventListener('click', launch);
 
-				<article class="blue">
-					<p>Comportement : La fourmi change la couleur de chaque case sur laquelle elle passe.<br />
-					<span style="margin-left: 9em;"></span>Si la fourmi se trouve sur une case noire elle tourne à gauche et avance.<br />
-					<span style="margin-left: 9em;">Sinon elle tourne à droite et avance.<br /></p>
-				</article>
+	/* ------ Fourmi ------*/
 
-				<article class="red">
-					<label for="speed">Vitesse : </label><input type="number" value="10" id="speed" min="1" max="1000" />
-					<button type="submit" onclick="launch();">ok</button>
-				</article>
+	const canvas = document.getElementById('fourmi');
+	const ctx = canvas.getContext('2d');
 
-				<canvas id="fourmi" height="600" width="600"></canvas>	<!-- x1 -->
+	ctx.fillStyle = 'rgb(150, 150, 160)';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-				<div class="alignArticle">
-					<article class="aligner">
-						<p>Nombre de pas : <span id="frameDisplay"></span></p>
-					</article>
-					<article class="aligner grey">
-						<p>Notes : La fourmi cogne contre les murs.<br />
-						<span style="margin-left: 4em;">La fourmi est folle ??</p>
-					</article>
-				</div>
+	let x = canvas.width / 4;
+	let y = canvas.height / 4;
+	let dir = 0;
+	let frame = 0;
 
-			</section>
-		</div>
+	function drawCase(x, y, r, g, b)
+	{
+		ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+		ctx.fillRect(2 * x, 2 * y, 2, 2);
+		frame++;
+	}
 
-		<script type="text/javascript" src="graphs.js"></script>
-		<script type="text/javascript">
+	function behaviour()
+	{
+		let pixData = ctx.getImageData(2 * x, 2 * y, 1, 1);
 
-			/* ------ Menu ------ */
-				
-			function menudisplay(numb)	// >onclick< ou addEventListener ??
+		if((pixData.data[0] == 0) && (pixData.data[1] == 0) && (pixData.data[2] == 0))
+		{
+			drawCase(x, y, 200, 200, 200);
+
+			if(dir == 0)
 			{
-				for (var i = 0; i < document.getElementsByClassName("displayNone" + numb).length; i++) 
-				{
-					if(document.getElementsByClassName("displayNone" + numb)[i].style.display!="block")
-					{
-						document.getElementsByClassName("displayNone" + numb)[i].style.display="block";
-					}
-					else
-					{
-						document.getElementsByClassName("displayNone" + numb)[i].style.display="none";
-					}
-				}
+				dir = 3;	// avec 4 ???
+				x--;
 			}
-
-			/* ------ Fourmi ------*/
-
-			const canvas = document.getElementById('fourmi');
-			const ctx = canvas.getContext('2d');
-
-			ctx.fillStyle = 'rgb(150, 150, 160)';
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-			let x = canvas.width / 4;
-			let y = canvas.height / 4;
-			let dir = 0;
-			let frame = 0;
-			
-			function drawCase(x, y, r, g, b)
+			else if(dir == 1)
 			{
-				ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
-				ctx.fillRect(2 * x, 2 * y, 2, 2);
-				frame++;
+				dir--;
+				y--;
 			}
-
-			function behaviour()
+			else if(dir == 2)
 			{
-				let pixData = ctx.getImageData(2 * x, 2 * y, 1, 1);
-
-				if((pixData.data[0] == 0) && (pixData.data[1] == 0) && (pixData.data[2] == 0))
-				{
-					drawCase(x, y, 200, 200, 200);
-
-					if(dir == 0)
-					{
-						dir = 3; // avec 4 ???
-						x--;
-					}
-					else if(dir == 1)
-					{
-						dir--;
-						y--;
-					}
-					else if(dir == 2)
-					{
-						dir--;
-						x++;
-					}
-					else
-					{
-						dir--;
-						y++;
-					}
-				}
-				else	/* (pixData.data[0] == 255) && (pixData.data[1] == 255) && (pixData.data[2] == 255) */
-				{
-					drawCase(x, y, 0, 0, 0);
-
-					if(dir == 0)
-					{
-						dir++;
-						x++;
-					}
-					else if(dir == 1)
-					{
-						dir++;
-						y++;
-					}
-					else if(dir == 2)
-					{
-						dir++;
-						x--;
-					}
-					else
-					{
-						dir = 0;
-						y--;
-					}
-				}
-
-				document.getElementById("frameDisplay").textContent = frame.toString();
+				dir--;
+				x++;
 			}
-
-			let inter;
-
-			function launch()
+			else
 			{
-				clearInterval(inter);
-				inter = setInterval(behaviour, Number(document.getElementById('speed').value));
+				dir--;
+				y++;
 			}
-			
-		</script>
+		}
+		else	/* (pixData.data[0] == 255) && (pixData.data[1] == 255) && (pixData.data[2] == 255) */
+		{
+			drawCase(x, y, 0, 0, 0);
 
-	</body>
+			if(dir == 0)
+			{
+				dir++;
+				x++;
+			}
+			else if(dir == 1)
+			{
+				dir++;
+				y++;
+			}
+			else if(dir == 2)
+			{
+				dir++;
+				x--;
+			}
+			else
+			{
+				dir = 0;
+				y--;
+			}
+		}
+
+		document.getElementById("frameDisplay").textContent = frame.toString();
+	}
+
+	let inter;
+
+	function launch()
+	{
+		clearInterval(inter);
+		inter = setInterval(behaviour, Number(document.getElementById('speed').value));
+	}
 	
-</html>
+</script>

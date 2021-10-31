@@ -1,355 +1,294 @@
-<!DOCTYPE html>
+<!-- Ressource statique pour Fourier à base de Photo -->
 
-<html>
 
-	<head>
-		<title>Khwârizmî</title>
+<article class="green">
+	<p>Cet outil permet de transformer une image en une suite de nombre dans le but d'une transformation de Fourier;<em> gadax</em></p>
+</article>
 
-		<link rel="stylesheet" type="text/css" href="style.css">
-		<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+<article class="blue">
+	<p>Comportement : Choisissez la photo d'un graphique sur un plan cartésien.<br>
+		<span style="margin-left: 9em;"></span>Remplissez les entrées.<br>
+		<span style="margin-left: 9em;"></span>Lancer les processus <strong>Temporel</strong> et <strong>Fourier</strong>.<br>
+	</p>
+</article>
 
-		<meta charset="UTF-8">
-	</head>
+<article class="red">
+	<input type="file" id="files" onchange="handleFiles(this.files)" accept="image/*"/>
+</article>
 
-	<body>	
+<canvas id="photo" height="0" width="0" ></canvas>
 
-		<nav>
-			<h2>MENU</h2>
-			<ul>
-				<li onclick="menudisplay(1)">I - Automates cellulaire
-					<a class="displayNone1" href="index.html">Wolfram</a>
-					<a class="displayNone1" href="kFourmi.html">Langton</a>
-					<a class="displayNone1" href="#">Conway soon</a>
-				</li>
-				<li onclick="menudisplay(2)">II - Fractal
-					<a class="displayNone2" href="kMandelbrot.html">Mandelbrot</a>
-					<a class="displayNone2" href="#">Julia soon</a>
-					<a class="displayNone2" href="kMenger.html">Menger</a>
-				</li>
-				<li onclick="menudisplay(3)">III - Outils
-					<a class="displayNone3" href="#top">Reconnaissance fonction</a>
-				</li>
-			</ul>
-			
-		</nav>
+<article class="red">
+	<div><label for="permis">Permissivité pour les couleurs : </label><input type="number" placeholder="default = 50" id="permis" min="0" max="255" /></div>
+	<div><label for="colorR">R : </label><input type="number" id="colorR" min="0" max="255"></div>
+	<div><label for="colorG">G : </label><input type="number" id="colorG" min="0" max="255"></div>
+	<div><label for="colorB">B : </label><input type="number" id="colorB" min="0" max="255"></div>
+	<div><label for="plageX">Plage en X : </label><input type="number" id="plageX"></div>
+	<div><label for="plageY">Plage en Y : </label><input type="number" id="plageY"></div>
+	<div><label for="Ymax">Valeur maximale : </label><input type="number" placeholder="default = - Ymin" id="Ymax"> ( de l'axe Y )</div>
+	<div><input type="submit" value="Temporel" id="temporel" onclick="processTemporel()"></div>
+</article>
 
-		<div class="layout">
-			<header>
-				<h1>Khwârizmî</h1>
-			</header>
+<canvas id="model" height="0" width="0"></canvas>
 
-			<section>
-				
-				<article class="green">
-					<p>Cet outil permet de transformer une image en une suite de nombre dans le but d'une transformation de Fourier;<em> gadax</em></p>
-				</article>
+<article class="red">
+	<div><label for="plageFreq">Plage à observer : 0 - </label><input type="number" placeholder="default" id="plageFreq" min="1" /></div>
+	<div><input type="submit" value="Fourier" id="fourier" onclick="processFourier()"></div>
+</article>
 
-				<article class="blue">
-					<p>Comportement : Choisissez la photo d'un graphique sur un plan cartésien.<br />
-					<span style="margin-left: 9em;">Remplissez les entrées.<br />
-						<span style="margin-left: 9em;">Lancer les processus <strong>Temporel</strong> et <strong>Fourier</strong>.<br /></p>
-				</article>
+<canvas id="modelF" height="0" width="0"></canvas>
 
-				<article class="red">
-					<div><input type="file" id="files" onchange="handleFiles(this.files)" accept="image/*"/></div>
-				</article>
-
-				<canvas id="photo" height="0" width="0" ></canvas>
-
-				<article class="red">
-					<div><label for="permis">Permissivité pour les couleurs : </label><input type="number" placeholder="default = 50" id="permis" min="0" max="255" /></div>
-					<div><label for="colorR">R : </label><input type="number" id="colorR" min="0" max="255" /></div>
-					<div><label for="colorG">G : </label><input type="number" id="colorG" min="0" max="255" /></div>
-					<div><label for="colorB">B : </label><input type="number" id="colorB" min="0" max="255" /></div>
-					<div><label for="plageX">Plage en X : </label><input type="number" id="plageX" /></div>
-					<div><label for="plageY">Plage en Y : </label><input type="number" id="plageY" /></div>
-					<div><label for="Ymax">Valeur maximale : </label><input type="number" placeholder="default = - Ymin" id="Ymax" /> ( de l'axe Y )</div>
-					<div><input type="submit" value="Temporel" id="temporel" onclick="processTemporel()" /></div>
-				</article>
-
-				<canvas id="model" height="0" width="0"></canvas>
-
-				<article class="red">
-					<div><label for="plageFreq">Plage à observer : 0 - </label><input type="number" placeholder="default" id="plageFreq" min="1" /></div>
-					<div><input type="submit" value="Fourier" id="fourier" onclick="processFourier()" /></div>
-				</article>
-
-				<canvas id="modelF" height="0" width="0"></canvas>
-
-				<s>
-					<article class="red">
-						<div>Filtre passe-bas : <br />
-							<label for="filtreBas">Ordre : </label><input type="number" id="filtreBas" min="1" />
-						</div>
-						<div>Filtre passe-haut : <br />
-							<label for="filtreHaut">Ordre : </label><input type="number" id="filtreHaut" min="1" />
-						</div>
-						<div><input type="submit" value="Filtrage" id="filtre" onclick="processFiltrage()" /></div>
-					</article>
-				</s>
-
-				<canvas id="modelFiltre" height="0" width="0"></canvas>
-
-				<div class="alignArticle">
-					<article class="aligner">
-						<p>Dimension de l'image : <span id="dimCanevas"></span></p>
-					</article>
-					<article class="aligner grey">
-						<p>Notes : Tous les contrôles ne sont pas encore implémentés</p>
-					</article>
-				</div>
-
-			</section>
+<s>
+	<article class="red">
+		<div>Filtre passe-bas : <br>
+			<label for="filtreBas">Ordre : </label><input type="number" id="filtreBas" min="1">
 		</div>
+		<div>Filtre passe-haut : <br>
+			<label for="filtreHaut">Ordre : </label><input type="number" id="filtreHaut" min="1">
+		</div>
+		<div><input type="submit" value="Filtrage" id="filtre" onclick="processFiltrage()"></div>
+	</article>
+</s>
 
-		<script type="text/javascript" src="graphs.js"></script>
-		<script type="text/javascript">
+<canvas id="modelFiltre" height="0" width="0"></canvas>
 
-			/* ------ Menu ------ */
-				
-			function menudisplay(numb)	// >onclick< ou addEventListener ??
+<div class="alignArticle">
+	<article class="aligner">
+		<p>Dimension de l'image : <span id="dimCanevas"></span></p>
+	</article>
+	<article class="aligner grey">
+		<p>Notes : Tous les contrôles ne sont pas encore implémentés</p>
+	</article>
+</div>
+
+<script type="text/javascript">
+
+
+	/* ------ Reco ------ */
+
+	/* gui */  // évolution
+
+	const p = document.getElementById('parag');
+
+	/* gui */
+
+
+	/* image */
+
+	const img = document.createElement('img');
+
+	/* /image */
+
+
+	/* photo */
+
+	const canvasP = document.getElementById('photo');
+	const ctxP = canvasP.getContext('2d');
+
+	let scaleX;
+	let scaleY;
+
+	/* /photo */
+
+
+	/* temporel */
+
+	const canvasModel = document.getElementById('model');
+	const ctxModel = canvasModel.getContext('2d');
+
+	const permisI = document.getElementById('permis');
+	const colorRI = document.getElementById('colorR');
+	const colorGI = document.getElementById('colorG');
+	const colorBI = document.getElementById('colorB');
+
+	const plageXI = document.getElementById('plageX');
+	const plageYI = document.getElementById('plageY');
+	const YmaxI = document.getElementById('Ymax');
+
+	let ordonneesZero;
+	let samples;
+
+	/* /temporel */
+
+
+	/* fourier */
+
+	const canvasModelF = document.getElementById('modelF');
+	const ctxModelF = canvasModelF.getContext('2d');
+
+	const plageFreqI = document.getElementById('plageFreq');
+
+	/* /fourier */
+
+
+	/* filtrage */
+
+	const canvasModelFiltre = document.getElementById('modelFiltre');
+	const ctxModelFiltre = canvasModelFiltre.getContext('2d');
+
+	/* /filtrage */
+
+	function handleFiles(files)
+	{
+		for (let i = 0; i < files.length; i++)
+		{
+			let file = files[i]; // la --- <
+			let imageType = /^image\//;
+
+			if (!imageType.test(file.type)) continue;
+
+			img.classList.add('obj');
+			img.file = file;
+			//preview.appendChild(img); // En admettant que "preview" est l'élément div qui contiendra le contenu affiché.
+
+			let reader = new FileReader(); // fuck CORS policy
+			reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+			reader.readAsDataURL(file); //  a la --- <
+		}
+	}
+
+	img.onload = function() 
+	{
+
+		height = img.height;
+		width = img.width;
+
+		/* photo */
+
+		canvasP.height = img.height;
+		canvasP.width = img.width;
+
+		ctxP.drawImage(img, 0, 0);
+
+		/* /photo */
+
+
+		/* temporel */
+
+		canvasModel.height = img.height;
+		canvasModel.width = img.width;
+
+		ctxModel.fillStyle = 'rgb(70, 70, 70)';
+		ctxModel.fillRect(0, 0, canvasModel.width, canvasModel.height);
+
+		grid(ctxModel);
+
+		/* /temporel */
+
+
+		/* fourier */
+
+		canvasModelF.height = img.height;
+		canvasModelF.width = img.width;
+
+		ctxModelF.fillStyle = 'rgb(70, 70, 70)';
+		ctxModelF.fillRect(0, 0, canvasModelF.width, canvasModelF.height);
+
+		grid(ctxModelF);
+
+		/* /fourier */
+
+		/* filtrage */
+
+		canvasModelFiltre.height = img.height;
+		canvasModelFiltre.width = img.width;
+
+		ctxModelFiltre.fillStyle = 'rgb(70, 70, 70)';
+		ctxModelFiltre.fillRect(0, 0, canvasModelFiltre.width, canvasModelFiltre.height);
+
+		grid(ctxModelFiltre);
+
+		/* /filtrage */
+
+		/* dimension de l'image */
+
+		document.getElementById('dimCanevas').textContent = canvasP.width + ' x ' + canvasP.height + ' px';
+
+		/* /dimension de l'image */
+	}
+
+
+	function processTemporel()
+	{
+		ctxModel.fillStyle = 'rgb(70, 70, 70)';
+		ctxModel.fillRect(0, 0, canvasModel.width, canvasModel.height);
+		grid(ctxModel);	// reset graphique
+
+		scaleX = plageXI.value / width;
+		scaleY = plageYI.value / height;
+
+		let r = Number(colorRI.value);
+		let g = Number(colorGI.value);
+		let b = Number(colorBI.value);
+		let permissivite = 50;
+		if(permisI.value != '') permissivite = Number(permisI.value);
+
+
+		let imgData = ctxP.getImageData(0, 0, canvasP.width, canvasP.height);
+
+
+		((YmaxI.value != '') && (plageYI.value != '')) ? (ordonneesZero = Math.floor(img.height * (Number(plageYI.value) - Number(YmaxI.value)) / Number(plageYI.value))) : (ordonneesZero = img.height / 2);
+
+		samples = Array(img.width).fill(0);
+
+		for (let i = 0; i < imgData.data.length; i += 4)
+		{
+			// Dimension de Minkowski-Bouligand -> biai algo -> car plus de valeur en diago pour les fonction trigo et poly
+			// Dimension de Hausdorff -> a peu près impartial vis-a-vis des fonctions
+			let rIsOk = ((r - permissivite) < imgData.data[i]) && (imgData.data[i] < (r + permissivite)),
+			gIsOk = ((g - permissivite) < imgData.data[i + 1]) && (imgData.data[i + 1] < (g + permissivite)),
+			bIsOk = ((b - permissivite) < imgData.data[i + 2]) && (imgData.data[i + 2] < (b + permissivite));
+
+			if(rIsOk && gIsOk && bIsOk)
 			{
-				for (var i = 0; i < document.getElementsByClassName("displayNone" + numb).length; i++) 
-				{
-					if(document.getElementsByClassName("displayNone" + numb)[i].style.display!="block")
-					{
-						document.getElementsByClassName("displayNone" + numb)[i].style.display="block";
-					}
-					else
-					{
-						document.getElementsByClassName("displayNone" + numb)[i].style.display="none";
-					}
-				}
+				let y = (img.height - (((i/4) - ((i / 4) % img.width)) / img.width)) - ordonneesZero;
+				samples.splice((i / 4) % img.width, 2/*3*/, y, y/*, y*/);
 			}
+		}
 
-			/* ------ Reco ------ */
+		// centrage en 0 d'ordonnées pour img.height \|/
+		trace(ctxModel, samples, Math.min(...samples) - 10, Math.max(...samples) + 10, '0', '150', '150');
+		scale(ctxModel, (Math.min(...samples) - 10) * scaleY, (Math.max(...samples) + 10) * scaleY, samples.length * scaleX);
+	}
 
-			/* gui */  // évolution
+	function processFourier()
+	{
+		ctxModelF.fillStyle = 'rgb(70, 70, 70)';
+		ctxModelF.fillRect(0, 0, canvasModelF.width, canvasModelF.height);
+		grid(ctxModelF);	// reset graphique
 
-			const p = document.getElementById('parag');
-
-			/* gui */
-
-
-			/* image */
-
-			const img = document.createElement('img');
-
-			/* /image */
-
-
-			/* photo */
-
-			const canvasP = document.getElementById('photo');
-			const ctxP = canvasP.getContext('2d');
-
-			let scaleX;
-			let scaleY;
-
-			/* /photo */
+		let omega = [Math.cos((2. * Math.PI) / samples.length), Math.sin((2. * Math.PI) / samples.length)];
 
 
-			/* temporel */
+		// zero-padding \|/
+		// les index des cases du zero-padding ne sont pas parcourue
+		let samplesCompleted = samples.concat(Array(samples.length * 9).fill(0));
 
-			const canvasModel = document.getElementById('model');
-			const ctxModel = canvasModel.getContext('2d');
+		let zoomSpectrum = samplesCompleted.length / 2;
+		if(plageFreqI.value != '') zoomSpectrum = plageFreqI.value * scaleX * samplesCompleted.length;
 
-			const permisI = document.getElementById('permis');
-			const colorRI = document.getElementById('colorR');
-			const colorGI = document.getElementById('colorG');
-			const colorBI = document.getElementById('colorB');
+		let magnitudes = [];
 
-			const plageXI = document.getElementById('plageX');
-			const plageYI = document.getElementById('plageY');
-			const YmaxI = document.getElementById('Ymax');
-
-			let ordonneesZero;
-			let samples;
-
-			/* /temporel */
-
-
-			/* fourier */
-
-			const canvasModelF = document.getElementById('modelF');
-			const ctxModelF = canvasModelF.getContext('2d');
-
-			const plageFreqI = document.getElementById('plageFreq');
-
-			/* /fourier */
-
-
-			/* filtrage */
-
-			const canvasModelFiltre = document.getElementById('modelFiltre');
-			const ctxModelFiltre = canvasModelFiltre.getContext('2d');
-
-			/* /filtrage */
-
-			function handleFiles(files)
+		for (let i = 0; i < zoomSpectrum; i++)
+		{
+			let transformee = [0., 0.];
+			for (let j = 0; j < samples.length; j++)
 			{
-				for (let i = 0; i < files.length; i++)
-				{
-					let file = files[i]; // la --- <
-					let imageType = /^image\//;
+				omega = [Math.cos(((2. * Math.PI) / samplesCompleted.length) * i * j), Math.sin(((2. * Math.PI) / samplesCompleted.length) * i * j)];
 
-					if (!imageType.test(file.type)) continue;
-
-					img.classList.add('obj');
-					img.file = file;
-					//preview.appendChild(img); // En admettant que "preview" est l'élément div qui contiendra le contenu affiché.
-
-					let reader = new FileReader(); // fuck CORS policy
-					reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
-					reader.readAsDataURL(file); //  a la --- <
-				}
+				transformee[0] += samplesCompleted[j] * omega[0];
+				transformee[1] += samplesCompleted[j] * omega[1];
 			}
+			magnitudes.push(scaleY * Math.sqrt((transformee[0]*transformee[0]) + (transformee[1]*transformee[1])) / (samples.length / 2));
+		}
 
-			img.onload = function() 
-			{
+		trace(ctxModelF, magnitudes, Math.min(...magnitudes), Math.max(...magnitudes), '250', '100', '250');
+		scale(ctxModelF, Math.min(...magnitudes), Math.max(...magnitudes), (zoomSpectrum / (samplesCompleted.length / 2)) * (1 / (2. * scaleX)));
+	}
 
-				height = img.height;
-				width = img.width;
+	function processFiltrage()
+	{
+		/*pass*/;
+	}
 
-				/* photo */
-
-				canvasP.height = img.height;
-				canvasP.width = img.width;
-
-				ctxP.drawImage(img, 0, 0);
-
-				/* /photo */
-
-
-				/* temporel */
-
-				canvasModel.height = img.height;
-				canvasModel.width = img.width;
-
-				ctxModel.fillStyle = 'rgb(70, 70, 70)';
-				ctxModel.fillRect(0, 0, canvasModel.width, canvasModel.height);
-
-				grid(ctxModel);
-
-				/* /temporel */
-
-
-				/* fourier */
-
-				canvasModelF.height = img.height;
-				canvasModelF.width = img.width;
-
-				ctxModelF.fillStyle = 'rgb(70, 70, 70)';
-				ctxModelF.fillRect(0, 0, canvasModelF.width, canvasModelF.height);
-
-				grid(ctxModelF);
-
-				/* /fourier */
-
-				/* filtrage */
-
-				canvasModelFiltre.height = img.height;
-				canvasModelFiltre.width = img.width;
-
-				ctxModelFiltre.fillStyle = 'rgb(70, 70, 70)';
-				ctxModelFiltre.fillRect(0, 0, canvasModelFiltre.width, canvasModelFiltre.height);
-
-				grid(ctxModelFiltre);
-
-				/* /filtrage */
-
-				/* dimension de l'image */
-
-				document.getElementById('dimCanevas').textContent = canvasP.width + ' x ' + canvasP.height + ' px';
-
-				/* /dimension de l'image */
-			}
-
-
-			function processTemporel()
-			{
-				ctxModel.fillStyle = 'rgb(70, 70, 70)';
-				ctxModel.fillRect(0, 0, canvasModel.width, canvasModel.height);
-				grid(ctxModel);	// reset graphique
-
-				scaleX = plageXI.value / width;
-				scaleY = plageYI.value / height;
-
-				let r = Number(colorRI.value);
-				let g = Number(colorGI.value);
-				let b = Number(colorBI.value);
-				let permissivite = 50;
-				if(permisI.value != '') permissivite = Number(permisI.value);
-
-
-				let imgData = ctxP.getImageData(0, 0, canvasP.width, canvasP.height);
-
-
-				((YmaxI.value != '') && (plageYI.value != '')) ? (ordonneesZero = Math.floor(img.height * (Number(plageYI.value) - Number(YmaxI.value)) / Number(plageYI.value))) : (ordonneesZero = img.height / 2);
-
-				samples = Array(img.width).fill(0);
-
-				for (let i = 0; i < imgData.data.length; i += 4)
-				{
-					// Dimension de Minkowski-Bouligand -> biai algo -> car plus de valeur en diago pour les fonction trigo et poly
-					// Dimension de Hausdorff -> a peu près impartial vis-a-vis des fonctions
-					let rIsOk = ((r - permissivite) < imgData.data[i]) && (imgData.data[i] < (r + permissivite)),
-						gIsOk = ((g - permissivite) < imgData.data[i + 1]) && (imgData.data[i + 1] < (g + permissivite)),
-						bIsOk = ((b - permissivite) < imgData.data[i + 2]) && (imgData.data[i + 2] < (b + permissivite));
-					if(rIsOk && gIsOk && bIsOk)
-					{
-						let y = (img.height - (((i/4) - ((i / 4) % img.width)) / img.width)) - ordonneesZero;
-						samples.splice((i / 4) % img.width, 2/*3*/, y, y/*, y*/);
-					}
-				}
-
-				//centrage en 0 d'ordonnées pour img.height \|/
-				trace(ctxModel, samples, Math.min(...samples) - 10, Math.max(...samples) + 10, '0', '150', '150');
-				scale(ctxModel, (Math.min(...samples) - 10) * scaleY, (Math.max(...samples) + 10) * scaleY, samples.length * scaleX);
-			}
-
-			function processFourier()
-			{
-				ctxModelF.fillStyle = 'rgb(70, 70, 70)';
-				ctxModelF.fillRect(0, 0, canvasModelF.width, canvasModelF.height);
-				grid(ctxModelF);	// reset graphique
-
-				let omega = [Math.cos((2. * Math.PI) / samples.length), Math.sin((2. * Math.PI) / samples.length)];
-
-
-				// zero-padding \|/
-				// les index des cases du zero-padding ne sont pas parcourue
-				let samplesCompleted = samples.concat(Array(samples.length * 9).fill(0));
-
-				let zoomSpectrum = samplesCompleted.length / 2;
-				if(plageFreqI.value != '') zoomSpectrum = plageFreqI.value * scaleX * samplesCompleted.length;
-
-				let magnitudes = [];
-
-				for (let i = 0; i < zoomSpectrum; i++)
-				{
-					let transformee = [0., 0.];
-					for (let j = 0; j < samples.length; j++)
-					{
-						omega = [Math.cos(((2. * Math.PI) / samplesCompleted.length) * i * j), Math.sin(((2. * Math.PI) / samplesCompleted.length) * i * j)];
-
-						transformee[0] += samplesCompleted[j] * omega[0];
-						transformee[1] += samplesCompleted[j] * omega[1];
-					}
-					magnitudes.push(scaleY * Math.sqrt((transformee[0]*transformee[0]) + (transformee[1]*transformee[1])) / (samples.length / 2));
-				}
-
-				trace(ctxModelF, magnitudes, Math.min(...magnitudes), Math.max(...magnitudes), '250', '100', '250');
-				scale(ctxModelF, Math.min(...magnitudes), Math.max(...magnitudes), (zoomSpectrum / (samplesCompleted.length / 2)) * (1 / (2. * scaleX)));
-			}
-
-			function processFiltrage()
-			{
-				;
-			}
-
-		</script>
-
-	</body>
-
-</html>
+</script>

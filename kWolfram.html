@@ -6,12 +6,12 @@
 </article>
 
 <article class="blue">	<!-- a transformer en liste -->
-	<p>Comportement : Une cellule est placée arbitrairement au centre de la première ligne du plan (en haut).<br />
-		<span style="margin-left: 9em;"></span>Pour chaque pixel de la première ligne on vérifie si une cellule est présente et si il y en a à sa droite et à sa gauche.<br />
+	<p>Comportement : Une cellule est placée arbitrairement au centre de la première ligne du plan (en haut).<br>
+		<span style="margin-left: 9em;"></span>Pour chaque pixel de la première ligne on vérifie si une cellule est présente et si il y en a à sa droite et à sa gauche.<br>
 		<span style="margin-left: 9em;"></span>Les règles si-dessus permettent de déterminer si il y a, ou non, naissance d'une cellule dans chaque cas.
-		<br />
+		<br>
 		<span style="margin-left: 9em;"></span>Si il y a naissance d'une cellule celle-ci est placée en dessous du centre des trois pixels précédement considérés.
-		<br />
+		<br>
 	</p>
 </article>
 
@@ -25,9 +25,9 @@
 	<input type="checkbox" id="rule6">	<!-- bnb -->
 	<input type="checkbox" id="rule7">	<!-- bbn -->
 	<input type="checkbox" id="rule8">	<!-- bbb -->
-	<span id='rule'></span>
-	<br /><label for="speed">Vitesse </label><input type="number" value="10" id="speed" min="1" max="1000" />
-	<button type="submit" id="launcher">ok</button>
+	<span id='rule'></span><br>
+	<label for="speed">Vitesse </label><input type="number" value="10" id="speed" min="1" max="1000">
+	<input type="submit" id="launcher" value="ok">
 </article>
 
 <canvas id="pyramide" height="600" width="1200"></canvas>	<!-- x2 -->
@@ -35,16 +35,16 @@
 <canvas id="model" height="200" width="1200"></canvas>	<!-- x6 -->
 
 <div class="alignArticle">
-	<article class="aligner">
+	<article>
 		<p id='nbCells'>Nombre de cellules : 1</p>
 	</article>
-	<article class="aligner grey">
+	<article class="grey">
 		<p>Notes : Le graphique donne la répartition des cellules en fonction des occurence (cf. fonction de Riemann)</p>
 	</article>
 </div>
 
 
-<script defer>
+<script type="text/javascript">
 
 	for(ele of document.getElementsByTagName('input'))
 	{

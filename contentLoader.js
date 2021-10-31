@@ -6,34 +6,36 @@ window.addEventListener('load', () => {
 			ele.addEventListener('click', (e) => {
 				e.preventDefault();
 				e.stopPropagation();
+			});
+
+			ele.addEventListener('click', (e) => {
+				document.location.hash = e.target.getAttribute('href').replace(/\.\w+/, '');
+
 				fetch('https://gadax.github.io/fewAlgos/' + e.target.getAttribute('href')).then(function(response) {
 						return response.text();
 
 					}).then(function(body) {
+						// retire les scriptsdu contenu visible
+						document.getElementById('dynContent').innerHTML = body.replace(/<script[\S\s]*?<\/script>/g, '');
 
-						//console.log([...body.matchAll(/<script[\S\s]*<\/script>/g)]);
-						//console.log(body);
+						// retire les eventuelles anciens scripts
+						document.getElementById('staticScripts').innerHTML = '';
 
-						for(let scriptText of body.matchAll(/<script[\S\s]*<\/script>/g))
+						// récupere tous les scripts
+						for(let scriptText of body.matchAll(/<script[\S\s]*?<\/script>/g))
 						{
 							if(scriptText[0] != undefined)
 							{
 								let uniqueScript = document.createElement('script');
 								uniqueScript.type = 'text/javascript';
-								//console.log(scriptText[0].replace(/(<([^>]+)>)/gi, ''));
-								//uniqueScript.textContent = 'console.log(\'hello\')';
-								/* enleve les balises */
-								uniqueScript.textContent = scriptText[0].replace(/<script( [.^>]*)*>/g, '').replace(/<\/script>/g, '');
-								console.log(uniqueScript.textContent);
-								document.body.appendChild(uniqueScript);
+
+								uniqueScript.textContent = scriptText[0].replace(/<script[\S\s]*?>/g, '').replace(/<\/script>/g, '');
+
+								document.getElementById('staticScripts').appendChild(uniqueScript);
 							}
 						}
-
-						body = body.replace(/<script[\S\s]*<\/script>/g, '');
-						// console.log(body);
-						document.getElementById('dynContent').innerHTML = body; // externaliser script
 					});
-				});
+				}, {once: true}); // remettre l'event listener après avoir utilisé celui d'un autre lien
 		}
 	}
 	else	// XMLHttpRequest

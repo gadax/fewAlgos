@@ -1,489 +1,429 @@
-<!DOCTYPE html>
+<!-- Ressource statique pour Éponge de Menger -->
 
-<html>
 
-	<head>
-		<title>Khwârizmî</title>
+<article class="green">
+	<p>L'éponge de Menger, parfois appelée éponge de Menger-Sierpinski, est un solide fractal. Il s'agit de l'extension dans une troisième dimension de l'ensemble de Cantor et du tapis de Sierpinski. Elle fut décrite pour la première fois par le mathématicien autrichien Karl Menger (Menger 1926).</p>
+</article>
 
-		<link rel="stylesheet" type="text/css" href="style.css">
-		<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+<article class="blue">
+	<p>M<sub>n+1</sub> = { (x, y, z) &isin; &#8477;<sup>3</sup> | &exist;i, j, k &isin; {0, 1, 2}, (3x-i, 3y-j, 3z-k) &isin; M<sub>n</sub>} <br>
+	Pas plus de un des i, j, k vaut 1.</p>
+</article>
 
-		<meta charset="UTF-8">
-	</head>
+<article class="red">
+	<div>X : <input type="range" min="0" max="1000" value="50" id="sliderX"></div><!--  -->
+	<div>Y : <input type="range" min="0" max="1000" value="50" id="sliderY"></div>
+	<div>Z : <input type="range" min="0" max="1000" value="50" id="sliderZ"></div>
+	<input type="submit" id="launcher" value="ok">
+</article>
 
-	<body>	
+<canvas id="c" width="600" height="600"></canvas>
 
-		<nav>
-			<h2>MENU</h2>
-			<ul>
-				<li onclick="menudisplay(1)">I - Automates cellulaire
-					<a class="displayNone1" href="#top">Wolfram</a>
-					<a class="displayNone1" href="kFourmi.html">Langton</a>
-					<a class="displayNone1" href="#">Conway soon</a>
-				</li>
-				<li onclick="menudisplay(2)">II - Fractal
-					<a class="displayNone2" href="kMandelbrot.html">Mandelbrot</a>
-					<a class="displayNone2" href="#">Julia soon</a>
-					<a class="displayNone2" href="kMenger.html">Menger</a>
-				</li>
-				<li onclick="menudisplay(3)">III - Outils
-					<a class="displayNone3" href="kRecoPhoto.html">Reconnaissance fonction</a>
-				</li>
-			</ul>
-			
-		</nav>
+<div class="alignArticle">
+	<article>
+		<p>Nombre d'occurences : <span id='nbOccurs'>0</span></p>
+	</article>
+	<article class="grey">
+		<p>Notes : Le nombre d'occurrences est limité à 2 ici.<br>cf. <em>Maximum call stack size exceeded error</em></p>
+	</article>
+</div>
 
-		<div class="layout">
-			<header>
-				<h1>Khwârizmî</h1>
-			</header>
+<script id="vertexShaderCode" type="x-shader/x-vertex">
+	attribute vec3 coordinates;
 
-			<section>
+	uniform mat4 rotationX;
+	uniform mat4 rotationY;
+	uniform mat4 rotationZ;
 
-				<article class="green">
-					<p>L'éponge de Menger, parfois appelée éponge de Menger-Sierpinski, est un solide fractal. Il s'agit de l'extension dans une troisième dimension de l'ensemble de Cantor et du tapis de Sierpinski. Elle fut décrite pour la première fois par le mathématicien autrichien Karl Menger (Menger 1926).</p>
-				</article>
+	uniform mat4 proj;
+	uniform mat4 view;
 
-				<article class="blue">
-					<p>M<sub>n+1</sub> = { (x, y, z) &isin; &#8477;<sup>3</sup> | &exist;i, j, k &isin; {0, 1, 2}, (3x-i, 3y-j, 3z-k) &isin; M<sub>n</sub>} <br />
-					Pas plus de un des i, j, k vaut 1.</p>
-				</article>
+	attribute vec3 color;
+	varying vec3 vColor;
 
-				<article class="red">
-					<div>X : <input type="range" min="0" max="1000" value="50" id="sliderX"></div><!--  -->
-					<div>Y : <input type="range" min="0" max="1000" value="50" id="sliderY"></div>
-					<div>Z : <input type="range" min="0" max="1000" value="50" id="sliderZ"></div>
-					<button onclick="launch();">launch</button>
-				</article>
+	void main(void)
+	{
+		gl_Position = proj * view * rotationX * rotationY * rotationZ * vec4(coordinates, 1.0);
+		/*gl_PointSize = 1.0;*/
+		vColor = color;
+	}
+</script>
 
-				<canvas id="c" width="600" height="600"></canvas>
+<script id="fragmentShaderCode" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec3 vColor;
 
-				<div class="alignArticle">
-					<article class="aligner">
-						<p>Nombre d'occurences : <span id='nbOccurs'>0</span></p>
-					</article>
-					<article class="aligner grey">
-						<p>Notes : Le nombre d'occurrences est limité à 2 ici.<br />
-							cf. <em>Maximum call stack size exceeded error</em></p>
-					</article>
-				</div>
+	void main(void)
+	{
+		gl_FragColor = vec4(vColor, 1.0);
+	}
+</script>
 
-			</section>
-		</div>
+<script type="text/javascript">
 
-		<script id="vertexShaderCode" type="x-shader/x-vertex">
-			attribute vec3 coordinates;
+	document.getElementById('launcher').addEventListener('click', launch);
+	
+	/* ------ Eponge ------ */
 
-			uniform mat4 rotationX;
-			uniform mat4 rotationY;
-			uniform mat4 rotationZ;
+	const canvas = document.querySelector('#c');
 
-			uniform mat4 proj;
-			uniform mat4 view;
+	const sliderX = document.getElementById('sliderX');
+	const sliderY = document.getElementById('sliderY');
+	const sliderZ = document.getElementById('sliderZ');
 
-			attribute vec3 color;
-			varying vec3 vColor;
+	const gl = canvas.getContext('webgl', /*{antialias: false}*/);
 
-			void main(void)
+	let vertices = [
+		-0.5,-0.5,-0.5,  0.5,-0.5,-0.5,  0.5, 0.5,-0.5, -0.5, 0.5,-0.5,
+		-0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5, 0.5, 0.5, -0.5, 0.5, 0.5,
+		-0.5,-0.5,-0.5, -0.5, 0.5,-0.5, -0.5, 0.5, 0.5, -0.5,-0.5, 0.5,
+		0.5,-0.5,-0.5,  0.5, 0.5,-0.5,  0.5, 0.5, 0.5,  0.5,-0.5, 0.5,
+		-0.5,-0.5,-0.5, -0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5,-0.5,-0.5,
+		-0.5, 0.5,-0.5, -0.5, 0.5, 0.5,  0.5, 0.5, 0.5,  0.5, 0.5,-0.5
+	];
+
+	// let colors = [
+		// 0,0,1, 0,0,1, 0,0,1, 0,0,1,
+		// 0,1,0, 0,1,0, 0,1,0, 0,1,0,
+		// 0,1,1, 0,1,1, 0,1,1, 0,1,1,
+		// 1,0,0, 1,0,0, 1,0,0, 1,0,0,
+		// 1,0,1, 1,0,1, 1,0,1, 1,0,1,
+		// 1,1,0, 1,1,0, 1,1,0, 1,1,0
+	// 	];
+	let colors = [
+		0,0,0.85, 0,0,0.85, 0,0,0.85, 0,0,0.85,
+		0,0.85,0, 0,0.85,0, 0,0.85,0, 0,0.85,0,
+		0,0.85,0.85, 0,0.85,0.85, 0,0.85,0.85, 0,0.85,0.85,
+		0.85,0,0, 0.85,0,0, 0.85,0,0, 0.85,0,0,
+		0.85,0,0.85, 0.85,0,0.85, 0.85,0,0.85, 0.85,0,0.85,
+		0.85,0.85,0, 0.85,0.85,0, 0.85,0.85,0, 0.85,0.85,0
+	];
+
+	let indices = [
+		0,1,2, 0,2,3, 4,5,6, 4,6,7,
+		8,9,10, 8,10,11, 12,13,14, 12,14,15,
+		16,17,18, 16,18,19, 20,21,22, 20,22,23 
+	];
+
+	const colors2 = [0,0,0]; 
+
+	const indices2 = [
+		0,1, 2,3, 4,5, 6,7, 8,9, 10,11, 12,13, 14,15,
+		16,17, 18,19, 20,21, 22,23 
+	];
+
+	let rotationXu,
+	rotationYu,
+	rotationZu,
+
+	proju,
+	viewu,
+
+	coorda,
+	colora;
+
+	window.addEventListener('load', function setupAnimation(evt) {
+
+		window.removeEventListener(evt.type, setupAnimation, false);
+
+		if(!gl)
+		{
+			throw 'Impossible d\'initialiser WebGL. Votre navigateur ou votre machine peut ne pas le supporter.';
+			return;
+		}
+
+		function setupShader(gl, source, type)
+		{
+			let shader = gl.createShader(type);
+			gl.shaderSource(shader, source);
+			gl.compileShader(shader);
+
+			if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) 
 			{
-				gl_Position = proj * view * rotationX * rotationY * rotationZ * vec4(coordinates, 1.0);
-				/*gl_PointSize = 1.0;*/
-				vColor = color;
+				let info = gl.getShaderInfoLog(shader);
+				throw 'Impossible de compiler le programme WebGL.\n\n' + info;
 			}
-		</script>
 
-		<script id="fragmentShaderCode" type="x-shader/x-fragment">
-			precision mediump float;
-			varying vec3 vColor;
+			return shader;
+		}
 
-			void main(void)
+		function setupProgram(gl, vertexShader, fragmentShader)
+		{
+			let program = gl.createProgram();
+
+			gl.attachShader(program, vertexShader);
+			gl.attachShader(program, fragmentShader);
+
+			gl.linkProgram(program);
+			gl.validateProgram(program);
+
+			if (!gl.getProgramParameter(program, gl.LINK_STATUS))
 			{
-				gl_FragColor = vec4(vColor, 1.0);
-			}
-		</script>
-
-		<script type="text/javascript">
-
-			/* ------ Menu ------ */
-				
-			function menudisplay(numb)	// >onclick< ou addEventListener ??
-			{
-				for (var i = 0; i < document.getElementsByClassName("displayNone" + numb).length; i++) 
-				{
-					if(document.getElementsByClassName("displayNone" + numb)[i].style.display!="block")
-					{
-						document.getElementsByClassName("displayNone" + numb)[i].style.display="block";
-					}
-					else
-					{
-						document.getElementsByClassName("displayNone" + numb)[i].style.display="none";
-					}
-				}
+				let info = gl.getProgramInfoLog(program);
+				throw 'Impossible de compiler le program WebGL.\n\n' + info;
 			}
 
-			/* ------ Eponge ------ */
+			gl.useProgram(program);
 
-			const canvas = document.querySelector('#c');
+			return program;
+		}
 
-			const sliderX = document.getElementById('sliderX');
-			const sliderY = document.getElementById('sliderY');
-			const sliderZ = document.getElementById('sliderZ');
+		const vertexShader = setupShader(gl, document.getElementById('vertexShaderCode').textContent, gl.VERTEX_SHADER);
 
-			const gl = canvas.getContext('webgl', /*{antialias: false}*/);
+		const fragmentShader = setupShader(gl, document.getElementById('fragmentShaderCode').textContent, gl.FRAGMENT_SHADER);
 
-			let vertices = [
-				-0.5,-0.5,-0.5,  0.5,-0.5,-0.5,  0.5, 0.5,-0.5, -0.5, 0.5,-0.5,
-				-0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5, 0.5, 0.5, -0.5, 0.5, 0.5,
-				-0.5,-0.5,-0.5, -0.5, 0.5,-0.5, -0.5, 0.5, 0.5, -0.5,-0.5, 0.5,
-				0.5,-0.5,-0.5,  0.5, 0.5,-0.5,  0.5, 0.5, 0.5,  0.5,-0.5, 0.5,
-				-0.5,-0.5,-0.5, -0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5,-0.5,-0.5,
-				-0.5, 0.5,-0.5, -0.5, 0.5, 0.5,  0.5, 0.5, 0.5,  0.5, 0.5,-0.5
-			];
-
-			/*let colors = [
-				0,0,1, 0,0,1, 0,0,1, 0,0,1,
-				0,1,0, 0,1,0, 0,1,0, 0,1,0,
-				0,1,1, 0,1,1, 0,1,1, 0,1,1,
-				1,0,0, 1,0,0, 1,0,0, 1,0,0,
-				1,0,1, 1,0,1, 1,0,1, 1,0,1,
-				1,1,0, 1,1,0, 1,1,0, 1,1,0
-			];*/
-			let colors = [
-				0,0,0.85, 0,0,0.85, 0,0,0.85, 0,0,0.85,
-				0,0.85,0, 0,0.85,0, 0,0.85,0, 0,0.85,0,
-				0,0.85,0.85, 0,0.85,0.85, 0,0.85,0.85, 0,0.85,0.85,
-				0.85,0,0, 0.85,0,0, 0.85,0,0, 0.85,0,0,
-				0.85,0,0.85, 0.85,0,0.85, 0.85,0,0.85, 0.85,0,0.85,
-				0.85,0.85,0, 0.85,0.85,0, 0.85,0.85,0, 0.85,0.85,0
-			];
-
-			let indices = [
-				0,1,2, 0,2,3, 4,5,6, 4,6,7,
-				8,9,10, 8,10,11, 12,13,14, 12,14,15,
-				16,17,18, 16,18,19, 20,21,22, 20,22,23 
-			];
-
-			const colors2 = [0,0,0]; 
-
-			const indices2 = [
-				0,1, 2,3, 4,5, 6,7, 8,9, 10,11, 12,13, 14,15,
-				16,17, 18,19, 20,21, 22,23 
-			];
-
-			let rotationXu,
-				rotationYu,
-				rotationZu,
-
-				proju,
-				viewu,
-
-				coorda,
-				colora;
-
-			window.addEventListener('load', function setupAnimation(evt) {
-
-				window.removeEventListener(evt.type, setupAnimation, false);
-
-				if(!gl)
-				{
-					throw 'Impossible d\'initialiser WebGL. Votre navigateur ou votre machine peut ne pas le supporter.';
-					return;
-				}
-
-				function setupShader(gl, source, type)
-				{
-					let shader = gl.createShader(type);
-					gl.shaderSource(shader, source);
-					gl.compileShader(shader);
-
-					if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) 
-					{
-						let info = gl.getShaderInfoLog(shader);
-						throw 'Impossible de compiler le programme WebGL.\n\n' + info;
-					}
-
-					return shader;
-				}
-
-				function setupProgram(gl, vertexShader, fragmentShader)
-				{
-					let program = gl.createProgram();
-
-					gl.attachShader(program, vertexShader);
-					gl.attachShader(program, fragmentShader);
-
-					gl.linkProgram(program);
-					gl.validateProgram(program);
-
-					if (!gl.getProgramParameter(program, gl.LINK_STATUS))
-					{
-						let info = gl.getProgramInfoLog(program);
-						throw 'Impossible de compiler le program WebGL.\n\n' + info;
-					}
-
-					gl.useProgram(program);
-
-					return program;
-				}
-
-				const vertexShader = setupShader(gl, document.getElementById('vertexShaderCode').textContent, gl.VERTEX_SHADER);
-
-				const fragmentShader = setupShader(gl, document.getElementById('fragmentShaderCode').textContent, gl.FRAGMENT_SHADER);
-
-				const program = setupProgram(gl, vertexShader, fragmentShader);
+		const program = setupProgram(gl, vertexShader, fragmentShader);
 
 
-				rotationXu = gl.getUniformLocation(program, 'rotationX');
-				rotationYu = gl.getUniformLocation(program, 'rotationY');
-				rotationZu = gl.getUniformLocation(program, 'rotationZ');
+		rotationXu = gl.getUniformLocation(program, 'rotationX');
+		rotationYu = gl.getUniformLocation(program, 'rotationY');
+		rotationZu = gl.getUniformLocation(program, 'rotationZ');
 
-				proju = gl.getUniformLocation(program, 'proj');
-				viewu = gl.getUniformLocation(program, 'view');
+		proju = gl.getUniformLocation(program, 'proj');
+		viewu = gl.getUniformLocation(program, 'view');
 
-				coorda = gl.getAttribLocation(program, 'coordinates');
-				gl.enableVertexAttribArray(coorda);
+		coorda = gl.getAttribLocation(program, 'coordinates');
+		gl.enableVertexAttribArray(coorda);
 
-				colora = gl.getAttribLocation(program, 'color');
-				gl.enableVertexAttribArray(colora);
+		colora = gl.getAttribLocation(program, 'color');
+		gl.enableVertexAttribArray(colora);
 
 
-				gl.uniformMatrix4fv(rotationXu, false, rotationX);
-				gl.uniformMatrix4fv(rotationYu, false, rotationY);
-				gl.uniformMatrix4fv(rotationZu, false, rotationZ);
+		gl.uniformMatrix4fv(rotationXu, false, rotationX);
+		gl.uniformMatrix4fv(rotationYu, false, rotationY);
+		gl.uniformMatrix4fv(rotationZu, false, rotationZ);
 
-				gl.uniformMatrix4fv(proju, false, /*[1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]*/getProjection(10, canvas.width / canvas.height, 1, 100));
-				gl.uniformMatrix4fv(viewu, false, [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,-6/*0*/,1]);
+		gl.uniformMatrix4fv(proju, false, /*[1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]*/getProjection(10, canvas.width / canvas.height, 1, 100));
+		gl.uniformMatrix4fv(viewu, false, [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,-6/*0*/,1]);
 
-				/*  setup  */
+		/*  setup  */
 
-				gl.enable(gl.DEPTH_TEST);
-				gl.depthFunc(gl.LEQUAL);
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
 
-				sliderX.addEventListener('input', animate);
-				sliderY.addEventListener('input', animate);
-				sliderZ.addEventListener('input', animate);
+		sliderX.addEventListener('input', animate);
+		sliderY.addEventListener('input', animate);
+		sliderZ.addEventListener('input', animate);
 
-				let inter;
-				let n = 0
-				animate();
+		let inter;
+		let n = 0
+		animate();
+	});
+
+	function rotate()
+	{
+		// cos -sin sin
+		let angleMin = Math.PI / 500,
+		pCo = Math.cos(angleMin * sliderX.value),
+		nSi = -Math.sin(angleMin * sliderX.value),
+		pSi = Math.sin(angleMin * sliderX.value);
+
+		rotationX = new Float32Array([
+			1.0,  0.0,  0.0,  0.0,
+			0.0,  pCo,  nSi,  0.0,
+			0.0,  pSi,  pCo,  0.0,
+			0.0,  0.0,  0.0,  1.0  
+		]);
+
+		pCo = Math.cos(angleMin * sliderY.value);
+		nSi = -Math.sin(angleMin * sliderY.value);
+		pSi = Math.sin(angleMin * sliderY.value);
+
+		rotationY = new Float32Array([
+			pCo,  0.0,  pSi,  0.0,
+			0.0,  1.0,  0.0,  0.0,
+			nSi,  0.0,  pCo,  0.0,
+			0.0,  0.0,  0.0,  1.0  
+		]);
+
+		pCo = Math.cos(angleMin * sliderZ.value);
+		nSi = -Math.sin(angleMin * sliderZ.value);
+		pSi = Math.sin(angleMin * sliderZ.value);
+
+		rotationZ = new Float32Array([
+			pCo,  nSi,  0.0,  0.0,
+			pSi,  pCo,  0.0,  0.0,
+			0.0,  0.0,  1.0,  0.0,
+			0.0,  0.0,  0.0,  1.0  
+		]);
+	}
+
+	let rotationX;
+	let rotationY;
+	let rotationZ;
+	rotate();
+
+	function behavior()
+	{
+		n++;
+		document.getElementById('nbOccurs').textContent = n;
+		//recreer 20 cubes plus petits a chaque ( n ) iterations  (20^n)
+
+		vertices.forEach(function(element, index, array) {
+			array[index] /= 3;
+		});
+
+		let edgeSize = 2 * Math.abs(vertices[0]);
+		vertices = replace(vertices, edgeSize);
+
+
+		let cubeNumb = Math.pow(20, n);
+
+		let colorsTemp = colors.slice();
+		for (let i = 0; i < cubeNumb; i++)
+		{
+			colors.push(...colorsTemp);
+		}
+
+		let indicesTemp = indices.slice();
+		for (let i = 0; i < cubeNumb; i++)
+		{
+			indicesTemp.forEach(function(element, index, array) {
+				array[index] += 24;
 			});
+			indices.push(...indicesTemp);
+		}
 
-			function rotate()
-			{
-				//cos -sin sin
-				let angleMin = Math.PI / 500,
-					pCo = Math.cos(angleMin * sliderX.value),
-					nSi = -Math.sin(angleMin * sliderX.value),
-					pSi = Math.sin(angleMin * sliderX.value);
+		animate();
+	}
 
-				rotationX = new Float32Array([
-					1.0,  0.0,  0.0,  0.0,
-					0.0,  pCo,  nSi,  0.0,
-					0.0,  pSi,  pCo,  0.0,
-					0.0,  0.0,  0.0,  1.0  
-				]);
+	function animate()
+	{
+		rotate();
 
-				pCo = Math.cos(angleMin * sliderY.value);
-				nSi = -Math.sin(angleMin * sliderY.value);
-				pSi = Math.sin(angleMin * sliderY.value);
+		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-				rotationY = new Float32Array([
-					pCo,  0.0,  pSi,  0.0,
-					0.0,  1.0,  0.0,  0.0,
-					nSi,  0.0,  pCo,  0.0,
-					0.0,  0.0,  0.0,  1.0  
-				]);
+		gl.uniformMatrix4fv(rotationXu, false, rotationX);
+		gl.uniformMatrix4fv(rotationYu, false, rotationY);
+		gl.uniformMatrix4fv(rotationZu, false, rotationZ);
 
-				pCo = Math.cos(angleMin * sliderZ.value);
-				nSi = -Math.sin(angleMin * sliderZ.value);
-				pSi = Math.sin(angleMin * sliderZ.value);
+		// Bind vertex buffer object
+		gl.bindBuffer(gl.ARRAY_BUFFER, setupBuffer(gl, vertices, gl.ARRAY_BUFFER, gl.STATIC_DRAW));
+		// point an attribute to the currently bound VBO
+		gl.vertexAttribPointer(coorda, 3, gl.FLOAT, false, 0, 0);
 
-				rotationZ = new Float32Array([
-					pCo,  nSi,  0.0,  0.0,
-					pSi,  pCo,  0.0,  0.0,
-					0.0,  0.0,  1.0,  0.0,
-					0.0,  0.0,  0.0,  1.0  
-				]);
-			}
+		gl.bindBuffer(gl.ARRAY_BUFFER, setupBuffer(gl, colors, gl.ARRAY_BUFFER, gl.STATIC_DRAW));
+		gl.vertexAttribPointer(colora, 3, gl.FLOAT, false, 0, 0);
 
-			let rotationX;
-			let rotationY;
-			let rotationZ;
-			rotate();
-
-			function behavior()
-			{
-				n++;
-				document.getElementById('nbOccurs').textContent = n;
-				//recreer 20 cubes plus petits a chaque ( n ) iterations  (20^n)
-
-				vertices.forEach(function(element, index, array) {
-					array[index] /= 3;
-				});
-
-				let edgeSize = 2 * Math.abs(vertices[0]);
-				vertices = replace(vertices, edgeSize);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, setupBuffer(gl, indices, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW));
+		gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+		//gl.drawArrays(gl.POINTS, 0, 4*6);	// tracé des points visible pour gl_PointSize > 1.0
 
 
-				let cubeNumb = Math.pow(20, n);
+		/*gl.bindBuffer(gl.ARRAY_BUFFER, setupBuffer(gl, colors2, gl.ARRAY_BUFFER, gl.STATIC_DRAW));
+		gl.vertexAttribPointer(colora, 3, gl.FLOAT, false, 0, 0);
 
-				let colorsTemp = colors.slice();
-				for (let i = 0; i < cubeNumb; i++)
-				{
-					colors.push(...colorsTemp);
-				}
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, setupBuffer(gl, indices2, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW));
+		gl.drawElements(gl.LINES, indices2.length, gl.UNSIGNED_SHORT, 0);*/
+	}
 
-				let indicesTemp = indices.slice();
-				for (let i = 0; i < cubeNumb; i++)
-				{
-					indicesTemp.forEach(function(element, index, array) {
-						array[index] += 24;
-					});
-					indices.push(...indicesTemp);
-				}
+	function setupBuffer(gl, bufferData, bufferType, drawType)
+	{
+		let buffer = gl.createBuffer();
+		gl.bindBuffer(bufferType, buffer);
 
-				animate();
-			}
+		// Float64Array?
+		if(bufferType == gl.ARRAY_BUFFER) gl.bufferData(bufferType, new Float32Array(bufferData), drawType);
+		//bufferType == gl.ELEMENT_ARRAY_BUFFER
+		else gl.bufferData(bufferType, new Uint16Array(bufferData), drawType);	// Uint32Array
+		//gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-			function animate()
-			{
-				rotate();
+		return buffer;
+	}
 
-				gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+	function getProjection(angle, a, zMin, zMax)
+	{
+		let ang = Math.tan((angle * .5) * Math.PI / 180);
 
-				gl.uniformMatrix4fv(rotationXu, false, rotationX);
-				gl.uniformMatrix4fv(rotationYu, false, rotationY);
-				gl.uniformMatrix4fv(rotationZu, false, rotationZ);
+		return [
+			0.5 / ang, 0, 0, 0,
+			0, 0.5 * a / ang, 0, 0,
+			0, 0, - (zMax + zMin) / (zMax - zMin), -1,
+			0, 0, ( - 2 * zMax * zMin) / (zMax - zMin), 1.0 
+		];	
+	}
 
-				gl.bindBuffer(gl.ARRAY_BUFFER, setupBuffer(gl, vertices, gl.ARRAY_BUFFER, gl.STATIC_DRAW));	// Bind vertex buffer object
-				gl.vertexAttribPointer(coorda, 3, gl.FLOAT, false, 0, 0);	// point an attribute to the currently bound VBOx
+	function translate(array, transVec3)
+	{
+		for(let i = 0; i < array.length; i++)
+		{
+			array[i] += transVec3[0];
+			i++;
+			array[i] += transVec3[1];
+			i++;
+			array[i] += transVec3[2];
+		}
 
-				gl.bindBuffer(gl.ARRAY_BUFFER, setupBuffer(gl, colors, gl.ARRAY_BUFFER, gl.STATIC_DRAW));
-				gl.vertexAttribPointer(colora, 3, gl.FLOAT, false, 0, 0);
+		return array;
+	}
 
-				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, setupBuffer(gl, indices, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW));
-				gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-				//gl.drawArrays(gl.POINTS, 0, 4*6);	// tracé des points visible pour gl_PointSize > 1.0
+	function replace(array, edgeSize)
+	{
+		let container = new Array();
 
+		// coins
+		container.push(...translate(array.slice(), [-edgeSize, -edgeSize, -edgeSize]));
+		container.push(...translate(array.slice(), [-edgeSize, -edgeSize,  edgeSize]));
+		container.push(...translate(array.slice(), [-edgeSize,  edgeSize, -edgeSize]));
+		container.push(...translate(array.slice(), [-edgeSize,  edgeSize,  edgeSize]));
+		container.push(...translate(array.slice(), [ edgeSize, -edgeSize, -edgeSize]));
+		container.push(...translate(array.slice(), [ edgeSize, -edgeSize,  edgeSize]));
+		container.push(...translate(array.slice(), [ edgeSize,  edgeSize, -edgeSize]));
+		container.push(...translate(array.slice(), [ edgeSize,  edgeSize,  edgeSize]));
 
-				/*gl.bindBuffer(gl.ARRAY_BUFFER, setupBuffer(gl, colors2, gl.ARRAY_BUFFER, gl.STATIC_DRAW));
-				gl.vertexAttribPointer(colora, 3, gl.FLOAT, false, 0, 0);
+		// horizontal
+		container.push(...translate(array.slice(), [-edgeSize, 0, -edgeSize]));
+		container.push(...translate(array.slice(), [-edgeSize, 0,  edgeSize]));
+		container.push(...translate(array.slice(), [ edgeSize, 0, -edgeSize]));
+		container.push(...translate(array.slice(), [ edgeSize, 0,  edgeSize]));
 
-				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, setupBuffer(gl, indices2, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW));
-				gl.drawElements(gl.LINES, indices2.length, gl.UNSIGNED_SHORT, 0);*/
+		// vertical
+		container.push(...translate(array.slice(), [0, -edgeSize, -edgeSize]));
+		container.push(...translate(array.slice(), [0, -edgeSize,  edgeSize]));
+		container.push(...translate(array.slice(), [0,  edgeSize, -edgeSize]));
+		container.push(...translate(array.slice(), [0,  edgeSize,  edgeSize]));
 
-				//if(typeof inter === 'undefined') inter = setInterval(behavior, 2000);
-			}
+		// coupe
+		container.push(...translate(array.slice(), [-edgeSize, -edgeSize, 0]));
+		container.push(...translate(array.slice(), [-edgeSize,  edgeSize, 0]));
+		container.push(...translate(array.slice(), [ edgeSize, -edgeSize, 0]));
+		container.push(...translate(array.slice(), [ edgeSize,  edgeSize, 0]));
 
-			function setupBuffer(gl, bufferData, bufferType, drawType)
-			{
-				let buffer = gl.createBuffer();
-				gl.bindBuffer(bufferType, buffer);
-				if(bufferType == gl.ARRAY_BUFFER) gl.bufferData(bufferType, new Float32Array(bufferData), drawType);	// Float64Array
-				//bufferType == gl.ELEMENT_ARRAY_BUFFER
-				else gl.bufferData(bufferType, new Uint16Array(bufferData), drawType);	// Uint32Array
-				//gl.bindBuffer(gl.ARRAY_BUFFER, null);
+		return container;
+	}
 
-				return buffer;
-			}
+	function launch()
+	{
+		n = 0;
+		document.getElementById('nbOccurs').textContent = n;
 
-			function getProjection(angle, a, zMin, zMax)
-			{
-				let ang = Math.tan((angle * .5) * Math.PI / 180);
+		vertices = [
+			-0.5,-0.5,-0.5,  0.5,-0.5,-0.5,  0.5, 0.5,-0.5, -0.5, 0.5,-0.5,
+			-0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5, 0.5, 0.5, -0.5, 0.5, 0.5,
+			-0.5,-0.5,-0.5, -0.5, 0.5,-0.5, -0.5, 0.5, 0.5, -0.5,-0.5, 0.5,
+			0.5,-0.5,-0.5,  0.5, 0.5,-0.5,  0.5, 0.5, 0.5,  0.5,-0.5, 0.5,
+			-0.5,-0.5,-0.5, -0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5,-0.5,-0.5,
+			-0.5, 0.5,-0.5, -0.5, 0.5, 0.5,  0.5, 0.5, 0.5,  0.5, 0.5,-0.5
+		];
 
-				return [
-					0.5 / ang, 0, 0, 0,
-					0, 0.5 * a / ang, 0, 0,
-					0, 0, - (zMax + zMin) / (zMax - zMin), -1,
-					0, 0, ( - 2 * zMax * zMin) / (zMax - zMin), 1.0 
-				];	
-			}
+		colors = [
+			0,0,0.85, 0,0,0.85, 0,0,0.85, 0,0,0.85,
+			0,0.85,0, 0,0.85,0, 0,0.85,0, 0,0.85,0,
+			0,0.85,0.85, 0,0.85,0.85, 0,0.85,0.85, 0,0.85,0.85,
+			0.85,0,0, 0.85,0,0, 0.85,0,0, 0.85,0,0,
+			0.85,0,0.85, 0.85,0,0.85, 0.85,0,0.85, 0.85,0,0.85,
+			0.85,0.85,0, 0.85,0.85,0, 0.85,0.85,0, 0.85,0.85,0
+		];
 
-			function translate(array, transVec3)
-			{
-				for(let i = 0; i < array.length; i++)
-				{
-					array[i] += transVec3[0];
-					i++;
-					array[i] += transVec3[1];
-					i++;
-					array[i] += transVec3[2];
-				}
+		indices = [
+			0,1,2, 0,2,3, 4,5,6, 4,6,7,
+			8,9,10, 8,10,11, 12,13,14, 12,14,15,
+			16,17,18, 16,18,19, 20,21,22, 20,22,23 
+		];
 
-				return array;
-			}
+		animate();
+		setTimeout(behavior, 2000);
+		setTimeout(behavior, 4000);
+	}
 
-			function replace(array, edgeSize)
-			{
-				let container = new Array();
-
-				// coins
-				container.push(...translate(array.slice(), [-edgeSize, -edgeSize, -edgeSize]));
-				container.push(...translate(array.slice(), [-edgeSize, -edgeSize,  edgeSize]));
-				container.push(...translate(array.slice(), [-edgeSize,  edgeSize, -edgeSize]));
-				container.push(...translate(array.slice(), [-edgeSize,  edgeSize,  edgeSize]));
-				container.push(...translate(array.slice(), [ edgeSize, -edgeSize, -edgeSize]));
-				container.push(...translate(array.slice(), [ edgeSize, -edgeSize,  edgeSize]));
-				container.push(...translate(array.slice(), [ edgeSize,  edgeSize, -edgeSize]));
-				container.push(...translate(array.slice(), [ edgeSize,  edgeSize,  edgeSize]));
-
-				// horizontal
-				container.push(...translate(array.slice(), [-edgeSize, 0, -edgeSize]));
-				container.push(...translate(array.slice(), [-edgeSize, 0,  edgeSize]));
-				container.push(...translate(array.slice(), [ edgeSize, 0, -edgeSize]));
-				container.push(...translate(array.slice(), [ edgeSize, 0,  edgeSize]));
-
-				// vertical
-				container.push(...translate(array.slice(), [0, -edgeSize, -edgeSize]));
-				container.push(...translate(array.slice(), [0, -edgeSize,  edgeSize]));
-				container.push(...translate(array.slice(), [0,  edgeSize, -edgeSize]));
-				container.push(...translate(array.slice(), [0,  edgeSize,  edgeSize]));
-
-				// coupe
-				container.push(...translate(array.slice(), [-edgeSize, -edgeSize, 0]));
-				container.push(...translate(array.slice(), [-edgeSize,  edgeSize, 0]));
-				container.push(...translate(array.slice(), [ edgeSize, -edgeSize, 0]));
-				container.push(...translate(array.slice(), [ edgeSize,  edgeSize, 0]));
-
-				return container;
-			}
-
-			function launch()
-			{
-				n = 0;
-				document.getElementById('nbOccurs').textContent = n;
-
-				vertices = [
-					-0.5,-0.5,-0.5,  0.5,-0.5,-0.5,  0.5, 0.5,-0.5, -0.5, 0.5,-0.5,
-					-0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5, 0.5, 0.5, -0.5, 0.5, 0.5,
-					-0.5,-0.5,-0.5, -0.5, 0.5,-0.5, -0.5, 0.5, 0.5, -0.5,-0.5, 0.5,
-					0.5,-0.5,-0.5,  0.5, 0.5,-0.5,  0.5, 0.5, 0.5,  0.5,-0.5, 0.5,
-					-0.5,-0.5,-0.5, -0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5,-0.5,-0.5,
-					-0.5, 0.5,-0.5, -0.5, 0.5, 0.5,  0.5, 0.5, 0.5,  0.5, 0.5,-0.5
-				];
-
-				colors = [
-					0,0,0.85, 0,0,0.85, 0,0,0.85, 0,0,0.85,
-					0,0.85,0, 0,0.85,0, 0,0.85,0, 0,0.85,0,
-					0,0.85,0.85, 0,0.85,0.85, 0,0.85,0.85, 0,0.85,0.85,
-					0.85,0,0, 0.85,0,0, 0.85,0,0, 0.85,0,0,
-					0.85,0,0.85, 0.85,0,0.85, 0.85,0,0.85, 0.85,0,0.85,
-					0.85,0.85,0, 0.85,0.85,0, 0.85,0.85,0, 0.85,0.85,0
-				];
-
-				indices = [
-					0,1,2, 0,2,3, 4,5,6, 4,6,7,
-					8,9,10, 8,10,11, 12,13,14, 12,14,15,
-					16,17,18, 16,18,19, 20,21,22, 20,22,23 
-				];
-
-				animate();
-				setTimeout(behavior, 2000);
-				setTimeout(behavior, 4000);
-			}
-
-		</script>
-
-	</body>
-
-</html>
+</script>
