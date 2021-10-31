@@ -46,35 +46,37 @@
 
 <script type="text/javascript">
 
-	for(ele of document.getElementsByTagName('input'))
-	{
-		ele.addEventListener('click', displayRule);
-	}
+	let wol = {
 
-	function displayRule()
-	{
-		let rule = 0;
-		if(document.getElementById('rule1').checked) rule += 128;
-		if(document.getElementById('rule2').checked) rule += 64;
-		if(document.getElementById('rule3').checked) rule += 32;
-		if(document.getElementById('rule4').checked) rule += 16;
-		if(document.getElementById('rule5').checked) rule += 8;
-		if(document.getElementById('rule6').checked) rule += 4;
-		if(document.getElementById('rule7').checked) rule += 2;
-		if(document.getElementById('rule8').checked) rule += 1;
+		for(ele of document.getElementsByTagName('input'))
+		{
+			ele.addEventListener('click', displayRule);
+		}
 
-
-		document.getElementById('rule').textContent = 'Règle : ' + String(rule);
-	}
-
-	displayRule();
+		function displayRule()
+		{
+			let rule = 0;
+			if(document.getElementById('rule1').checked) rule += 128;
+			if(document.getElementById('rule2').checked) rule += 64;
+			if(document.getElementById('rule3').checked) rule += 32;
+			if(document.getElementById('rule4').checked) rule += 16;
+			if(document.getElementById('rule5').checked) rule += 8;
+			if(document.getElementById('rule6').checked) rule += 4;
+			if(document.getElementById('rule7').checked) rule += 2;
+			if(document.getElementById('rule8').checked) rule += 1;
 
 
-	let canvas = document.getElementById('pyramide');
-	let ctx = canvas.getContext('2d');
+			document.getElementById('rule').textContent = 'Règle : ' + String(rule);
+		}
 
-	ctx.fillStyle = 'rgb(120, 120, 130)';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
+		displayRule();
+
+
+		const canvas = document.getElementById('pyramide');
+		const ctx = canvas.getContext('2d');
+
+		ctx.fillStyle = 'rgb(120, 120, 130)';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	// setup
 	let y = 0;
@@ -193,5 +195,7 @@
 		trace(ctxModel, aCells, 0, 1.1*Math.max(...aCells), '0', '150', '150');
 		scale(ctxModel, 0, 1.1*Math.max(...aCells), aCells.length);
 	}
+
+};
 
 </script>
