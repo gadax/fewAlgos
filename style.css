@@ -34,9 +34,10 @@ h2
 	align-items: center;
 }
 
-li
+li, a
 {
 	display: block;
+	text-decoration: none;
 	background-color: #556;
 	text-align: center;
 	margin: 15px;
@@ -56,17 +57,10 @@ li:active
 	border: 2px inset grey;
 }
 
-a
+li > a
 {
 	display: none;
-	text-decoration: none;
-	background-color: #556;
-	text-align: center;
-	margin: 15px;
-	padding: 2px;
-	color: #fff;
 	border: 1px outset grey;
-	overflow: hidden;
 }
 
 a:hover
@@ -105,10 +99,13 @@ header
 
 h1
 {
+	font-family: 'Changa One';
+	font-weight: 500;
+	font-size: 4em;
+
 	letter-spacing: 0.2em;
 	display: block;
 	color: #fef;
-	font-size: 46px;
 	text-shadow: 1px 1px 0px #334,
 				 1px 2px 0px #334,
 				 1px 3px 0px #334,
@@ -203,3 +200,18 @@ input[placeholder]
 }
 
 /*----------------- /Contenu ---------------------*/
+
+
+/*----------------- Index ---------------------*/
+
+article > a
+{
+	display: inline-block;
+	border: 1px solid black;
+	background-color: transparent;
+	color: black;
+}
+
+/*----------------- /Index ---------------------*/
+
+

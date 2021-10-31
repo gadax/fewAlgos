@@ -3,7 +3,6 @@ window.addEventListener('load', () => {
 	{
 		if(document.location.hash != '')
 		{
-			console.log(document.location.hash);
 			fetch('https://gadax.github.io/fewAlgos/' + document.location.hash.replace('#', '')).then(function(response) {
 				return response.text();
 
@@ -35,15 +34,13 @@ window.addEventListener('load', () => {
 			ele.addEventListener('click', (e) => {
 				e.preventDefault();
 				e.stopPropagation();
-			});
 
-			ele.addEventListener('click', (e) => {
-				if(document.location.hash != e.target.getAttribute('href'))
+				if(document.location.hash.replace('#', '') != e.target.getAttribute('href'))
 				{
 					document.location.hash = e.target.getAttribute('href');
 					document.location.reload();
 				}
-			}/*, {once: false}*/); // remettre l'event listener après avoir utilisé celui d'un autre lien ?
+			});
 		}
 	}
 	else	// XMLHttpRequest
