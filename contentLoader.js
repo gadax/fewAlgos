@@ -1,6 +1,7 @@
 window.addEventListener('load', () => {
 	if (window.fetch)	// fetch
 	{
+		// charge le contenu si un hash est présent
 		if(document.location.hash != '')
 		{
 			fetch('https://gadax.github.io/fewAlgos/' + document.location.hash.replace('#', '')).then(function(response) {
@@ -29,6 +30,7 @@ window.addEventListener('load', () => {
 			});
 		}
 
+		// clicker sur un lien modifie le hash (si différent) et recharge la page
 		for(ele of document.getElementsByTagName('a'))
 		{
 			ele.addEventListener('click', (e) => {

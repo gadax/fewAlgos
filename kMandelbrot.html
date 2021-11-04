@@ -10,12 +10,12 @@
 <article class="blue">
 	<p>Comportement : z<sub>0</sub> = 0<span style="margin-left: 9em;"></span>L'image est situé dans un plan complexe, les axes sont tracés en blanc.<br>
 		<span style="margin-left: 9em;"></span>z<sub>n+1</sub> = z<sub>n</sub><sup>2</sup> + c<br>
+		où z est le terme de la suite dont on cherche si elle converge et c est les coordonnées de chaque point du plan.
 	</p>
 </article>
 
-
 <article class="red">
-	<label for="speed">Vitesse </label><input type="number" value="10" id="speed" min="1" max="1000" />
+	<label for="speed">Vitesse </label><input type="number" value="10" id="speed" min="1" max="1000">
 	<input type="submit" id="launcher" value="ok">
 </article>
 
@@ -64,13 +64,13 @@
 	{
 		c[0] = (i * scalex) - 2;
 
-		for (let j = 0; j < canvas.height; j++)
+		for(let j = 0; j < canvas.height; j++)
 		{
 			z = [0., 0.];
 
 			c[1] = (j * scaley) - 1;
 
-			for (rang = 0; (rang < rangMax) && ((z[0]*z[0] + z[1]*z[1]) < 4); rang++)
+			for(rang = 0; (rang < rangMax) && ((z[0]*z[0] + z[1]*z[1]) < 4); rang++)
 			{
 				z = [z[0]*z[0] - z[1]*z[1] + c[0], 2. * z[0] * z[1] + c[1]];
 			}
@@ -86,6 +86,7 @@
 				ctx.fillRect(i, j, 1, 1);
 			}
 		}
+
 		i++;
 		if(i >= canvas.width) clearInterval(inter);
 	}

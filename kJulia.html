@@ -1,0 +1,103 @@
+<!-- Ressource statique pour Ensemble de Julia -->
+
+
+<article class="green">
+	<p>Les Ensembles de Julia sont</p>
+</article>
+
+<article class="blue">
+	<p>Comportement : z<sub>0</sub> = 0<span style="margin-left: 9em;"></span>L'image est situé dans un plan complexe, les axes sont tracés en blanc.<br>
+		<span style="margin-left: 9em;"></span>z<sub>n+1</sub> = z<sub>n</sub><sup>2</sup> + c<br>
+		où z est les coordonnées de chaque point du plan et c est une constante choisie arbitrairement.
+	</p>
+</article>
+
+<article class="red">
+	<label for="speed">Vitesse : </label><input type="number" value="10" id="speed" min="1" max="1000">
+	<label for="composanteRe">Re(C) : </label><input type="number" value="-0.75" id="composanteRe" min="0" max="1">
+	<label for="composanteIm">Im(C) : </label><input type="number" value="0.13" id="composanteIm" min="0" max="1">
+	<input type="submit" id="launcher" value="ok">
+</article>
+
+<canvas id="julia" height="660" width="990"></canvas>	<!-- x1.5 -->
+
+
+<script type="text/javascript">
+
+	document.getElementById('launcher').addEventListener('click', launch);
+
+	/* ------- Ensemble ------ */
+
+	const canvas = document.getElementById('julia');
+	const ctx = canvas.getContext('2d');
+
+	const scalex = 3. / canvas.width;
+	const scaley = 2. / canvas.height;
+
+	ctx.fillStyle = 'white';	// axes
+	ctx.fillRect(2 * canvas.width / 3, 0, 1, canvas.height);
+	ctx.fillRect(0, canvas.height / 2, canvas.width, 1);
+
+	let z = [0., 0.];
+	let c = [-0.75, 0.13];
+	let rank;
+	const rankMax = 100;
+
+	let i = 0;
+	let inter;
+
+	function behaviour()	/*for(let i = 0; i < canvas.width; i++)*/
+	{
+		for (let j = 0; j < canvas.height; j++)
+		{
+			z[0] = (i * scalex) - 1.5;
+			z[1] = (j * scaley) - 1;
+
+			for (rank = 0; (rank < rankMax) && ((z[0]*z[0] + z[1]*z[1]) < 4); rank++)
+			{
+				z = [z[0]*z[0] - z[1]*z[1] + c[0], 2. * z[0] * z[1] + c[1]];
+			}
+
+			if(rank == rankMax)	// converge
+			{
+				ctx.fillStyle = 'black';
+				ctx.fillRect(i, j, 1, 1);
+			}
+			else if(rank < ((1/4) * rankMax))
+			{
+				ctx.fillStyle = 'rgba(255, 255, 100, ' + (rank / rankMax) + ')';
+				ctx.fillRect(i, j, 1, 1);
+			}
+			else if(rank < ((2/4) * rankMax))
+			{
+				ctx.fillStyle = 'rgba(255, 100, 255, ' + (rank / rankMax) + ')';
+				ctx.fillRect(i, j, 1, 1);
+			}
+			else if(rank < ((3/4) * rankMax))
+			{
+				ctx.fillStyle = 'rgba(255, 100, 100, ' + (rank / rankMax) + ')';
+				ctx.fillRect(i, j, 1, 1);
+			}
+			else
+			{
+				ctx.fillStyle = 'rgba(100, 255, 255, ' + (rank / rankMax) + ')';
+				ctx.fillRect(i, j, 1, 1);
+			}
+		}
+
+		i++;
+		if(i >= canvas.width) clearInterval(inter);
+	}
+
+	function launch()
+	{
+		c = [
+			Number(document.getElementById('composanteRe').value),
+			Number(document.getElementById('composanteIm').value)
+		];
+
+		clearInterval(inter);
+		inter = setInterval(behaviour, Number(document.getElementById('speed').value));
+	}
+
+</script>
