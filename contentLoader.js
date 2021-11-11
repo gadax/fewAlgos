@@ -25,15 +25,13 @@ window.addEventListener('load', () => {
 						// initialise les attributs du script
 						for(let attributs of scriptText[0].match(/ \w+="[\S]+"/g))
 						{
-							uniqueScript[attributs.split('=')[0].substring(1)] = attributs.split('=')[1];
-							//console.log(attributs.split('=')[0].substring(1));
+							uniqueScript[attributs.split('=')[0].substring(1)] = attributs.split('=')[1].replace(/"/g, '');
+							//console.log(attributs.split('=')[1].replace(/"/g, ''));
 						}
 
-						console.log(uniqueScript.type);
-						console.log('"text/javascript"');
-						console.log(uniqueScript.type == '"text/javascript"');
+						//console.log(uniqueScript.type);
 
-						if(uniqueScript.type == '"text/javascript"')
+						if(uniqueScript.type == 'text/javascript')
 						{
 							// initialise le contenu du nouvel élément Script et l'intègre au DOM
 							uniqueScript.textContent = scriptText[0].replace(/<script[\S\s]*?>/g, '').replace(/<\/script>/g, '');

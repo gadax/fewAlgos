@@ -61,13 +61,12 @@
 
 <script type="text/javascript">
 
-	console.log('je suis parsé');
-
 	document.getElementById('launcher').addEventListener('click', launch);
 	
 	/* ------ Eponge ------ */
 
 	const canvas = document.querySelector('#c');
+	canvas.style['background-color'] = '#333';
 
 	const sliderX = document.getElementById('sliderX');
 	const sliderY = document.getElementById('sliderY');
