@@ -114,14 +114,21 @@
 	];
 
 	let rotationXu,
-	rotationYu,
-	rotationZu,
+		rotationYu,
+		rotationZu,
 
-	proju,
-	viewu,
+		proju,
+		viewu,
 
-	coorda,
-	colora;
+		coorda,
+		colora;
+
+
+	let rotationX,
+		rotationY,
+		rotationZ;
+		
+	rotate();
 
 	/*window.addEventListener('load', */(function setupAnimation(evt)
 	{
@@ -249,11 +256,6 @@
 			0.0,  0.0,  0.0,  1.0  
 		]);
 	}
-
-	let rotationX;
-	let rotationY;
-	let rotationZ;
-	rotate();
 
 	function behavior()
 	{
