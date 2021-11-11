@@ -66,13 +66,12 @@
 	/* ------ Eponge ------ */
 
 	const canvas = document.querySelector('#c');
-	canvas.style['background-color'] = '#333';
 
 	const sliderX = document.getElementById('sliderX');
 	const sliderY = document.getElementById('sliderY');
 	const sliderZ = document.getElementById('sliderZ');
 
-	const gl = canvas.getContext('webgl', /*{antialias: false}*/);
+	const gl = canvas.getContext('webgl');
 
 	let vertices = [
 		-0.5,-0.5,-0.5,  0.5,-0.5,-0.5,  0.5, 0.5,-0.5, -0.5, 0.5,-0.5,
@@ -83,14 +82,6 @@
 		-0.5, 0.5,-0.5, -0.5, 0.5, 0.5,  0.5, 0.5, 0.5,  0.5, 0.5,-0.5
 	];
 
-	// let colors = [
-		// 0,0,1, 0,0,1, 0,0,1, 0,0,1,
-		// 0,1,0, 0,1,0, 0,1,0, 0,1,0,
-		// 0,1,1, 0,1,1, 0,1,1, 0,1,1,
-		// 1,0,0, 1,0,0, 1,0,0, 1,0,0,
-		// 1,0,1, 1,0,1, 1,0,1, 1,0,1,
-		// 1,1,0, 1,1,0, 1,1,0, 1,1,0
-	// 	];
 	let colors = [
 		0,0,0.85, 0,0,0.85, 0,0,0.85, 0,0,0.85,
 		0,0.85,0, 0,0.85,0, 0,0.85,0, 0,0.85,0,
@@ -127,14 +118,11 @@
 	let rotationX,
 		rotationY,
 		rotationZ;
-		
+
 	rotate();
 
-	/*window.addEventListener('load', */(function setupAnimation(evt)
+	(function setupAnimation(evt)
 	{
-
-		//window.removeEventListener(evt.type, setupAnimation, false);
-
 		if(!gl)
 		{
 			throw 'Impossible d\'initialiser WebGL. Votre navigateur ou votre machine peut ne pas le supporter.';
@@ -312,13 +300,6 @@
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, setupBuffer(gl, indices, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW));
 		gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 		//gl.drawArrays(gl.POINTS, 0, 4*6);	// tracé des points visible pour gl_PointSize > 1.0
-
-
-		/*gl.bindBuffer(gl.ARRAY_BUFFER, setupBuffer(gl, colors2, gl.ARRAY_BUFFER, gl.STATIC_DRAW));
-		gl.vertexAttribPointer(colora, 3, gl.FLOAT, false, 0, 0);
-
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, setupBuffer(gl, indices2, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW));
-		gl.drawElements(gl.LINES, indices2.length, gl.UNSIGNED_SHORT, 0);*/
 	}
 
 	function setupBuffer(gl, bufferData, bufferType, drawType)

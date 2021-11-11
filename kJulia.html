@@ -14,8 +14,8 @@
 
 <article class="red">
 	<label for="speed">Vitesse : </label><input type="number" value="10" id="speed" min="1" max="1000">
-	<label for="composanteRe">Re(C) : </label><input type="number" value="-0.75" id="composanteRe" min="0" max="1">
-	<label for="composanteIm">Im(C) : </label><input type="number" value="0.13" id="composanteIm" min="0" max="1">
+	<label for="composanteRe">Re(C) : </label><input type="number" value="-0.75" id="composanteRe" min="0" max="1" step="0.1">
+	<label for="composanteIm">Im(C) : </label><input type="number" value="0.13" id="composanteIm" min="0" max="1" step="0.1">
 	<input type="submit" id="launcher" value="ok">
 </article>
 
@@ -35,7 +35,7 @@
 	const scaley = 2. / canvas.height;
 
 	ctx.fillStyle = 'white';	// axes
-	ctx.fillRect(2 * canvas.width / 3, 0, 1, canvas.height);
+	ctx.fillRect(canvas.width / 2, 0, 1, canvas.height);
 	ctx.fillRect(0, canvas.height / 2, canvas.width, 1);
 
 	let z = [0., 0.];
