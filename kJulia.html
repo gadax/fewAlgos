@@ -31,6 +31,9 @@
 	const canvas = document.getElementById('julia');
 	const ctx = canvas.getContext('2d');
 
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
 	const scalex = 3. / canvas.width;
 	const scaley = 2. / canvas.height;
 
