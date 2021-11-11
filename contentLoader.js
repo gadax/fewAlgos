@@ -27,10 +27,7 @@ window.addEventListener('load', () => {
 						for(let attributs of scriptText[0].match(/ \w+="[\S]+"/g))
 						{
 							uniqueScript[attributs.split('=')[0].substring(1)] = attributs.split('=')[1].replace(/"/g, '');
-							//console.log(attributs.split('=')[1].replace(/"/g, ''));
 						}
-
-						//console.log(uniqueScript.type);
 
 						if(uniqueScript.type == 'text/javascript')
 						{
