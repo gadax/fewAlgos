@@ -19,12 +19,32 @@ window.addEventListener('load', () => {
 				{
 					if(scriptText[0] != undefined)
 					{
+						// crée un nouvel élément Script 
 						let uniqueScript = document.createElement('script');
-						uniqueScript.type = 'text/javascript';
 
-						uniqueScript.textContent = scriptText[0].replace(/<script[\S\s]*?>/g, '').replace(/<\/script>/g, '');
+						// initialise les attributs du script
+						for(let attributs of scriptText[0].match(/ \w+="[\S]+"/g))
+						{
+							uniqueScript[attributs.split('=')[0].substring(1)] = attributs.split('=')[1];
+							//console.log(attributs.split('=')[0].substring(1));
+						}
 
-						document.getElementById('staticScripts').appendChild(uniqueScript);
+						console.log(uniqueScript.type);
+						console.log('"text/javascript"');
+						console.log(uniqueScript.type == '"text/javascript"');
+
+						if(uniqueScript.type == '"text/javascript"')
+						{
+							// initialise le contenu du nouvel élément Script et l'intègre au DOM
+							uniqueScript.textContent = scriptText[0].replace(/<script[\S\s]*?>/g, '').replace(/<\/script>/g, '');
+							document.getElementById('staticScripts').appendChild(uniqueScript);
+						}
+						else
+						{
+							// si le script n'est pas du javascript (GLSL) le colle comme du texte
+							// afin d'éviter qu'il soit interpreté.
+							document.getElementById('staticScripts').innerHTML += scriptText;
+						}
 					}
 				}
 			});
