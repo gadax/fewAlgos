@@ -21,6 +21,7 @@ window.addEventListener('load', () => {
 					{
 						// crée un nouvel élément Script 
 						let uniqueScript = document.createElement('script');
+						uniqueScript.type = 'text/javascript';
 
 						// initialise les attributs du script
 						for(let attributs of scriptText[0].match(/ \w+="[\S]+"/g))
