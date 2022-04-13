@@ -97,9 +97,11 @@
 		{
 			let pixData = ctx.getImageData(i - 1, y, 3, 1);
 
-			let backInBlack = [(pixData.data[0] == 0) && (pixData.data[1] == 0) && (pixData.data[2] == 0),
-			(pixData.data[4] == 0) && (pixData.data[5] == 0) && (pixData.data[6] == 0),
-			(pixData.data[8] == 0) && (pixData.data[9] == 0) && (pixData.data[10] == 0)];
+			let backInBlack = [
+				(pixData.data[0] == 0) && (pixData.data[1] == 0) && (pixData.data[2] == 0) && (pixData.data[3] != 0),
+				(pixData.data[4] == 0) && (pixData.data[5] == 0) && (pixData.data[6] == 0) && (pixData.data[7] != 0),
+				(pixData.data[8] == 0) && (pixData.data[9] == 0) && (pixData.data[10] == 0) && (pixData.data[11] != 0)
+				];
 
 			if(backInBlack[0])
 			{
